@@ -1,14 +1,11 @@
 
-import type { newItem } from "../types/itemType"
+import type { ItemsResponse, newItem } from "../types/itemType"
 import { api } from "./axios"
 
-export const getAllItems = async () => {
-
-    const res = await api.get("/items")
-    return res.data
-
-
-}
+export const getAllItems = async (page: number) => {
+  const res = await api.get<ItemsResponse>('/items', { params: { page } });
+  return res.data;
+};
 
 
 export const getItemById = async (id: string) => {

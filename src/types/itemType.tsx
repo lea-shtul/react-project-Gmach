@@ -19,12 +19,12 @@ export type Item = {
     };
 };
 
-// export type ItemsResponse = {
-//   items: Item[];
-//   total: number;
-//   page: number;
-//   pageSize: number;
-// };
+export type ItemsResponse = {
+  items: Item[];
+  total: number;
+  page: number;
+  pageSize: number;
+};
 
 
 export type requestItem = {
