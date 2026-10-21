@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
+import { Link as RouterLink } from 'react-router-dom';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { getAllMeta } from '../server/metaApi';
 import { updateRequestStatus } from '../server/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Box, Card, CardContent, Stack, Typography, Chip, Button } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography, Chip, Button, Link } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 
 
 type RequestCardProps = {
@@ -14,6 +16,8 @@ type RequestCardProps = {
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString('he-IL');
 
+const toWhatsAppNumber = (phone: string) => phone.replace(/\D/g, '').replace(/^0/, '972');
+
 const statusColor: Record<RequestStatus, 'warning' | 'success' | 'info' | 'default' | 'error'> = {
     PENDING: 'warning',
     APPROVED: 'success',
@@ -21,6 +25,15 @@ const statusColor: Record<RequestStatus, 'warning' | 'success' | 'info' | 'defau
     RETURNED: 'default',
     REJECTED: 'error',
     CANCELLED: 'default',
+};
+
+const statusBarColor: Record<RequestStatus, string> = {
+    PENDING: 'warning.main',
+    APPROVED: 'success.main',
+    BORROWED: 'info.main',
+    RETURNED: 'grey.400',
+    REJECTED: 'error.main',
+    CANCELLED: 'grey.400',
 };
 
 const RequestCard = ({ request }: RequestCardProps) => {
@@ -43,10 +56,19 @@ const RequestCard = ({ request }: RequestCardProps) => {
     const statusLabel = meta?.statuses.find((s) => s.value === request.status)?.label;
 
     return (
-        <Card variant="outlined">
+        <Card
+            variant="outlined"
+            sx={{
+                borderInlineStartWidth: 4,
+                borderInlineStartStyle: 'solid',
+                borderInlineStartColor: statusBarColor[request.status],
+            }}
+        >
             <CardContent>
                 <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
-                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{request.item.title}</Typography>
+                    <Link component={RouterLink} to={`/items/${request.item.id}`} sx={{ fontWeight: 600 }}>
+                        {request.item.title}
+                    </Link>
                     <Chip label={statusLabel} size="small" color={statusColor[request.status]} />
                 </Stack>
 
@@ -62,9 +84,25 @@ const RequestCard = ({ request }: RequestCardProps) => {
                 </Typography>
 
                 {request.owner.phone && (
-                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 0.5 }}>
-                        <PhoneIcon fontSize="small" color="action" />
-                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{request.owner.phone}</Typography>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mt: 0.5 }}>
+                        <Stack
+                            direction="row"
+                            spacing={0.5}
+                            component="a"
+                            href={`tel:${request.owner.phone}`}
+                            sx={{ alignItems: 'center', color: 'text.primary', textDecoration: 'none' }}
+                        >
+                            <PhoneIcon fontSize="small" color="action" />
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{request.owner.phone}</Typography>
+                        </Stack>
+                        <Link
+                            href={`https://wa.me/${toWhatsAppNumber(request.owner.phone)}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            sx={{ display: 'flex', alignItems: 'center', color: 'success.main' }}
+                        >
+                            <WhatsAppIcon fontSize="small" />
+                        </Link>
                     </Stack>
                 )}
 
