@@ -1,5 +1,5 @@
 
-import { useContext } from 'react';
+import { useContext, type ReactElement } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { userContext } from '../context/userContext';
@@ -11,8 +11,13 @@ import {
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
 import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import CallMadeIcon from '@mui/icons-material/CallMade';
+import CallReceivedIcon from '@mui/icons-material/CallReceived';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import PageHeader from '../components/PageHeader';
 import EmptyState from '../components/EmptyState';
+import StatCard, { type StatColor } from '../components/StatCard';
 
 const formatDay = (date: string) =>
     new Date(date).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });
@@ -41,11 +46,11 @@ const MyStats = () => {
 
     const { totals, topItem } = data;
 
-    const statCards = [
-        { number: totals.myItemsCount, label: 'פריטים שפרסמתי' },
-        { number: totals.timesMyItemsLent, label: 'פעמים שהשאלתי' },
-        { number: totals.timesIBorrowed, label: 'פעמים ששאלתי' },
-        { number: totals.pendingReceived, label: 'בקשות שמחכות לי' },
+    const statCards: { number: number; label: string; icon: ReactElement; color: StatColor }[] = [
+        { number: totals.myItemsCount, label: 'פריטים שפרסמתי', icon: <Inventory2Icon />, color: 'primary' },
+        { number: totals.timesMyItemsLent, label: 'פעמים שהשאלתי', icon: <CallMadeIcon />, color: 'primary' },
+        { number: totals.timesIBorrowed, label: 'פעמים ששאלתי', icon: <CallReceivedIcon />, color: 'success' },
+        { number: totals.pendingReceived, label: 'בקשות שמחכות לי', icon: <PendingActionsIcon />, color: 'warning' },
     ];
 
     return (
@@ -53,11 +58,8 @@ const MyStats = () => {
             <PageHeader title="ההשפעה שלי" subtitle={'סיכום הפעילות וההשפעה שלך בגמ"ח'} />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
-                {statCards.map(({ number, label }) => (
-                    <Paper key={label} variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
-                        <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{number}</Typography>
-                        <Typography variant="body2" color="text.secondary">{label}</Typography>
-                    </Paper>
+                {statCards.map(({ number, label, icon, color }) => (
+                    <StatCard key={label} number={number} label={label} icon={icon} color={color} />
                 ))}
             </Box>
 
@@ -98,10 +100,12 @@ const MyStats = () => {
                     <Typography variant="h5">מה קורה בשכונה – {user?.neighborhood}</Typography>
 
                     <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
-                        <Paper variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
-                            <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{hood.newItemsThisWeek}</Typography>
-                            <Typography variant="body2" color="text.secondary">פריטים חדשים השבוע</Typography>
-                        </Paper>
+                        <StatCard
+                            number={hood.newItemsThisWeek}
+                            label="פריטים חדשים השבוע"
+                            icon={<Inventory2Icon />}
+                            color="info"
+                        />
                     </Box>
 
                     <Paper variant="outlined" sx={{ p: 2.5 }}>

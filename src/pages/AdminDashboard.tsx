@@ -1,3 +1,4 @@
+import type { ReactElement } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
@@ -10,7 +11,12 @@ import {
     Box, Paper, Stack, Typography, Chip, Alert, CircularProgress,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material';
+import PeopleAltIcon from '@mui/icons-material/PeopleAlt';
+import Inventory2Icon from '@mui/icons-material/Inventory2';
+import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
+import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import PageHeader from '../components/PageHeader';
+import StatCard, { type StatColor } from '../components/StatCard';
 
 
 const STATUS_COLORS: Record<string, string> = {
@@ -62,11 +68,11 @@ const AdminDashboard = () => {
 
     const { totals } = stats;
 
-    const statCards = [
-        { number: totals.users, label: 'משתמשות רשומות' },
-        { number: totals.items, label: 'פריטים באתר' },
-        { number: totals.activeLoans, label: 'השאלות פעילות' },
-        { number: totals.pendingRequests, label: 'בקשות ממתינות' },
+    const statCards: { number: number; label: string; icon: ReactElement; color: StatColor }[] = [
+        { number: totals.users, label: 'משתמשות רשומות', icon: <PeopleAltIcon />, color: 'primary' },
+        { number: totals.items, label: 'פריטים באתר', icon: <Inventory2Icon />, color: 'info' },
+        { number: totals.activeLoans, label: 'השאלות פעילות', icon: <SwapHorizIcon />, color: 'success' },
+        { number: totals.pendingRequests, label: 'בקשות ממתינות', icon: <PendingActionsIcon />, color: 'warning' },
     ];
 
     return (
@@ -75,11 +81,8 @@ const AdminDashboard = () => {
             <PageHeader title="לוח בקרה" subtitle="נתוני המערכת והמשתמשות הרשומות" />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
-                {statCards.map(({ number, label }) => (
-                    <Paper key={label} variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
-                        <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{number}</Typography>
-                        <Typography variant="body2" color="text.secondary">{label}</Typography>
-                    </Paper>
+                {statCards.map(({ number, label, icon, color }) => (
+                    <StatCard key={label} number={number} label={label} icon={icon} color={color} />
                 ))}
             </Box>
 
