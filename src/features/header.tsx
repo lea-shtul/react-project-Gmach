@@ -1,6 +1,11 @@
+import { useState } from 'react';
 import { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Box, Avatar, Badge } from '@mui/material';
+import {
+    AppBar, Toolbar, Typography, Button, Box, Avatar, Badge,
+    IconButton, Drawer, List, ListItemButton, Divider,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { userContext } from '../context/userContext';
 import { useQuery } from '@tanstack/react-query';
@@ -17,14 +22,31 @@ const navStyle = {
     },
 };
 
+const drawerNavStyle = {
+    color: 'text.secondary',
+    '&.active': {
+        color: 'primary.main',
+        fontWeight: 'bold',
+    },
+};
+
 const Header = () => {
     const { logout, user } = useContext(userContext);
+    const [drawerOpen, setDrawerOpen] = useState(false);
 
     const { data: myStats } = useQuery({
         queryKey: ['stats', 'me', user?.id],
         queryFn: getMyStats,
     });
 
+    const navItems = [
+        { to: '/', end: true, label: 'פריטים להשאלה' },
+        { to: '/my-items', label: 'הפריטים שלי' },
+        { to: '/myRequests', label: 'הבקשות שלי' },
+        { to: '/received', label: 'בקשות שקיבלתי', badge: myStats?.totals.pendingReceived },
+        { to: '/stats', label: 'ההשפעה שלי' },
+        ...(user?.role === 'ADMIN' ? [{ to: '/admin', label: 'לוח הבקרה' }] : []),
+    ];
 
     return (
         <AppBar
@@ -33,44 +55,86 @@ const Header = () => {
             sx={{ bgcolor: 'background.paper', borderBottom: '1px solid', borderColor: 'divider' }}
         >
             <Toolbar sx={{ gap: 1 }}>
+                <IconButton
+                    onClick={() => setDrawerOpen(true)}
+                    sx={{ display: { xs: 'flex', md: 'none' } }}
+                >
+                    <MenuIcon />
+                </IconButton>
+
                 <Typography
                     variant="h6"
                     component={Link}
                     to="/"
                     sx={{
                         display: 'flex', alignItems: 'center', gap: 0.5,
-                        color: 'primary.main', textDecoration: 'none', fontWeight: 'bold', ml: 3,
+                        color: 'primary.main', textDecoration: 'none', fontWeight: 'bold', ml: { xs: 0, md: 3 },
                     }}
                 >
                     <HandshakeIcon fontSize="small" />
                     גמ"ח שכונתי
                 </Typography>
 
-                <Button component={NavLink} to="/" end sx={navStyle}>פריטים להשאלה</Button>
-                <Button component={NavLink} to="/my-items" sx={navStyle}>הפריטים שלי</Button>
-                <Button component={NavLink} to="/myRequests" sx={navStyle}>הבקשות שלי</Button>
-                <Button component={NavLink} to="/received" sx={navStyle}>
-                    <Badge badgeContent={myStats?.totals.pendingReceived} color="error">
-                        בקשות שקיבלתי
-                    </Badge>
-                </Button>
-                <Button component={NavLink} to="/stats" sx={navStyle}>ההשפעה שלי</Button>
-                {user?.role === 'ADMIN' && (
-                    <Button component={NavLink} to="/admin" sx={navStyle}>לוח הבקרה</Button>
-                )}
+                <Box sx={{ display: { xs: 'none', md: 'flex' }, gap: 1 }}>
+                    {navItems.map(({ to, end, label, badge }) => (
+                        <Button key={to} component={NavLink} to={to} end={end} sx={navStyle}>
+                            {badge ? (
+                                <Badge badgeContent={badge} color="error">
+                                    {label}
+                                </Badge>
+                            ) : label}
+                        </Button>
+                    ))}
+                </Box>
 
                 <Box sx={{ flexGrow: 1 }} />
                 {/* avater גורם לזה להיות עגול */}
                 <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
                     {user?.fullName[0]}
                 </Avatar>
-                <Typography variant="body2" sx={{ color: 'text.primary' }}>
+                <Typography variant="body2" sx={{ display: { xs: 'none', sm: 'flex' }, color: 'text.primary' }}>
                     שלום, {user?.fullName}
                 </Typography>
                 <Button variant="outlined" size="small" onClick={logout}>
                     יציאה
                 </Button>
             </Toolbar>
+
+            <Drawer anchor="right" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
+                <Box sx={{ width: 260 }} role="presentation">
+                    <Box sx={{ p: 2, display: 'flex', alignItems: 'center', gap: 1 }}>
+                        <Avatar sx={{ bgcolor: 'primary.main', width: 32, height: 32 }}>
+                            {user?.fullName[0]}
+                        </Avatar>
+                        <Typography variant="body2">שלום, {user?.fullName}</Typography>
+                    </Box>
+                    <Divider />
+                    <List>
+                        {navItems.map(({ to, end, label, badge }) => (
+                            <ListItemButton
+                                key={to}
+                                component={NavLink}
+                                to={to}
+                                end={end}
+                                onClick={() => setDrawerOpen(false)}
+                                sx={drawerNavStyle}
+                            >
+                                {badge ? (
+                                    <Badge badgeContent={badge} color="error">
+                                        {label}
+                                    </Badge>
+                                ) : label}
+                            </ListItemButton>
+                        ))}
+                    </List>
+                    <Divider />
+                    <Box sx={{ p: 2 }}>
+                        <Button fullWidth variant="outlined" size="small" onClick={logout}>
+                            יציאה
+                        </Button>
+                    </Box>
+                </Box>
+            </Drawer>
         </AppBar>
     );
 };
