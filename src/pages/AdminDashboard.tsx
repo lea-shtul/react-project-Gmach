@@ -5,9 +5,11 @@ import {
 } from 'recharts';
 import { getAllMeta } from '../server/metaApi';
 import { getAdminStats } from '../server/statsApi';
-import '../style/stats.css';
 import { getAdminUsers } from '../server/getUsers';
-import { Box, CircularProgress } from '@mui/material';
+import {
+    Box, Paper, Stack, Typography, Chip, Alert, CircularProgress,
+    Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
+} from '@mui/material';
 
 
 const STATUS_COLORS: Record<string, string> = {
@@ -42,7 +44,7 @@ const AdminDashboard = () => {
     if (isLoading) return<Box sx={{ display: 'flex', justifyContent: 'center', mt: 4 }}>
   <CircularProgress />
 </Box>
-    if (isError) return <p>אירעה שגיאה בטעינת הנתונים</p>;
+    if (isError) return <Alert severity="error">אירעה שגיאה בטעינת הנתונים</Alert>;
     if (!stats) return null;
 
     const categoryData = stats.byCategory.map((c) => ({
@@ -59,31 +61,28 @@ const AdminDashboard = () => {
 
     const { totals } = stats;
 
+    const statCards = [
+        { number: totals.users, label: 'משתמשות רשומות' },
+        { number: totals.items, label: 'פריטים באתר' },
+        { number: totals.activeLoans, label: 'השאלות פעילות' },
+        { number: totals.pendingRequests, label: 'בקשות ממתינות' },
+    ];
+
     return (
-        <div className="stats">
-            <h2>לוח בקרה</h2>
+        <Stack spacing={3}>
+            <Typography variant="h5">לוח בקרה</Typography>
 
-            <div className="stats__cards">
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.users}</span>
-                    <span className="stat-card__label">משתמשות רשומות</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.items}</span>
-                    <span className="stat-card__label">פריטים באתר</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.activeLoans}</span>
-                    <span className="stat-card__label">השאלות פעילות</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.pendingRequests}</span>
-                    <span className="stat-card__label">בקשות ממתינות</span>
-                </div>
-            </div>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
+                {statCards.map(({ number, label }) => (
+                    <Paper key={label} variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
+                        <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{number}</Typography>
+                        <Typography variant="body2" color="text.secondary">{label}</Typography>
+                    </Paper>
+                ))}
+            </Box>
 
-            <div className="stats__box">
-                <h3>פריטים ובקשות לפי קטגוריה</h3>
+            <Paper variant="outlined" sx={{ p: 2.5 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>פריטים ובקשות לפי קטגוריה</Typography>
                 <ResponsiveContainer width="100%" height={300}>
                     <BarChart data={categoryData}>
                         <XAxis dataKey="label" />
@@ -94,11 +93,11 @@ const AdminDashboard = () => {
                         <Bar dataKey="requests" name="בקשות" fill="#f59e0b" />
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
+            </Paper>
 
-            <div className="stats__row">
-                <div className="stats__box">
-                    <h3>בקשות לפי חודש</h3>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: 3 }}>
+                <Paper variant="outlined" sx={{ p: 2.5 }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>בקשות לפי חודש</Typography>
                     <ResponsiveContainer width="100%" height={260}>
                         <LineChart data={stats.monthlyRequests}>
                             <XAxis dataKey="month" tickFormatter={formatMonth} />
@@ -107,10 +106,10 @@ const AdminDashboard = () => {
                             <Line type="monotone" dataKey="count" name="בקשות" stroke="#4338ca" strokeWidth={2} />
                         </LineChart>
                     </ResponsiveContainer>
-                </div>
+                </Paper>
 
-                <div className="stats__box">
-                    <h3>בקשות לפי סטטוס</h3>
+                <Paper variant="outlined" sx={{ p: 2.5 }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>בקשות לפי סטטוס</Typography>
                     <ResponsiveContainer width="100%" height={260}>
                         <PieChart>
                             <Pie data={statusData} dataKey="count" nameKey="label" outerRadius={95}>
@@ -122,46 +121,50 @@ const AdminDashboard = () => {
                             <Legend />
                         </PieChart>
                     </ResponsiveContainer>
-                </div>
-            </div>
+                </Paper>
+            </Box>
 
             {users && (
-                <div className="stats__box">
-                    <h3>משתמשות ({users.length})</h3>
-                    <div className="table-wrapper">
-                        <table className="users-table">
-                            <thead>
-                                <tr>
-                                    <th>שם</th>
-                                    <th>אימייל</th>
-                                    <th>טלפון</th>
-                                    <th>שכונה</th>
-                                    <th>פריטים</th>
-                                    <th>בקשות</th>
-                                    <th>הצטרפה</th>
-                                </tr>
-                            </thead>
-                            <tbody>
+                <Paper variant="outlined" sx={{ p: 2.5 }}>
+                    <Typography variant="h6" sx={{ mb: 1 }}>משתמשות ({users.length})</Typography>
+                    <TableContainer>
+                        <Table size="small">
+                            <TableHead>
+                                <TableRow>
+                                    <TableCell>שם</TableCell>
+                                    <TableCell>אימייל</TableCell>
+                                    <TableCell>טלפון</TableCell>
+                                    <TableCell>שכונה</TableCell>
+                                    <TableCell>פריטים</TableCell>
+                                    <TableCell>בקשות</TableCell>
+                                    <TableCell>הצטרפה</TableCell>
+                                </TableRow>
+                            </TableHead>
+                            <TableBody>
                                 {users.map((u) => (
-                                    <tr key={u.id}>
-                                        <td>
-                                            {u.fullName}
-                                            {u.role === 'ADMIN' && <span className="badge badge--category"> מנהלת</span>}
-                                        </td>
-                                        <td>{u.email}</td>
-                                        <td>{u.phone}</td>
-                                        <td>{u.neighborhood}</td>
-                                        <td>{u.itemsCount}</td>
-                                        <td>{u.requestsCount}</td>
-                                        <td>{new Date(u.createdAt).toLocaleDateString('he-IL')}</td>
-                                    </tr>
+                                    <TableRow key={u.id} hover>
+                                        <TableCell>
+                                            <Stack direction="row" spacing={1} sx={{ alignItems: 'center' }}>
+                                                <span>{u.fullName}</span>
+                                                {u.role === 'ADMIN' && (
+                                                    <Chip label="מנהלת" size="small" color="primary" variant="outlined" />
+                                                )}
+                                            </Stack>
+                                        </TableCell>
+                                        <TableCell>{u.email}</TableCell>
+                                        <TableCell>{u.phone}</TableCell>
+                                        <TableCell>{u.neighborhood}</TableCell>
+                                        <TableCell>{u.itemsCount}</TableCell>
+                                        <TableCell>{u.requestsCount}</TableCell>
+                                        <TableCell>{new Date(u.createdAt).toLocaleDateString('he-IL')}</TableCell>
+                                    </TableRow>
                                 ))}
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
+                            </TableBody>
+                        </Table>
+                    </TableContainer>
+                </Paper>
             )}
-        </div>
+        </Stack>
     );
 };
 
