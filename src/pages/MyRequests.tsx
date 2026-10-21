@@ -1,9 +1,13 @@
 import { useQuery } from "@tanstack/react-query"
 import { getMyRequests } from "../server/requests"
 import { useContext } from "react";
+import { Link } from "react-router-dom";
 import { userContext } from "../context/userContext";
 import RequestCard from "../components/requestCard";
-import { Box, Stack, Typography, Alert, CircularProgress } from "@mui/material";
+import PageHeader from "../components/PageHeader";
+import EmptyState from "../components/EmptyState";
+import { Box, Stack, Button, Alert, CircularProgress } from "@mui/material";
+import InboxIcon from "@mui/icons-material/Inbox";
 
 
 const MyRequests = () => {
@@ -26,11 +30,24 @@ if (isLoading) return (
 
 if (isError) return <Alert severity="error">אירעה שגיאה בהצגת הבקשות</Alert>;
 if (!requests) return null;
-if (requests.length === 0) return <Typography color="text.secondary">עוד לא שלחת בקשות</Typography>;
+
 return (
-  <Stack spacing={2}>
-    {requests.map((r) => <RequestCard key={r.id} request={r} />)}
-  </Stack>
+  <Box>
+    <PageHeader title="הבקשות שלי" subtitle="בקשות ההשאלה ששלחת לשכנות" />
+
+    {requests.length === 0 ? (
+      <EmptyState
+        icon={<InboxIcon sx={{ fontSize: 56 }} />}
+        title="עוד לא שלחת בקשות"
+        text="כשתמצאי פריט שמתאים לך, אפשר לשלוח בקשת השאלה מתוך דף הפריט"
+        action={<Button component={Link} to="/" variant="outlined">לרשימת הפריטים</Button>}
+      />
+    ) : (
+      <Stack spacing={2}>
+        {requests.map((r) => <RequestCard key={r.id} request={r} />)}
+      </Stack>
+    )}
+  </Box>
 )
 
 }

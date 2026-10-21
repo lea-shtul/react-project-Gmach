@@ -10,6 +10,7 @@ import {
     Box, Paper, Stack, Typography, Chip, Alert, CircularProgress,
     Table, TableBody, TableCell, TableContainer, TableHead, TableRow,
 } from '@mui/material';
+import PageHeader from '../components/PageHeader';
 
 
 const STATUS_COLORS: Record<string, string> = {
@@ -71,7 +72,7 @@ const AdminDashboard = () => {
     return (
         <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%', p: { xs: 2, sm: 3 } }}>
         <Stack spacing={3}>
-            <Typography variant="h5">לוח בקרה</Typography>
+            <PageHeader title="לוח בקרה" subtitle="נתוני המערכת והמשתמשות הרשומות" />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
                 {statCards.map(({ number, label }) => (
