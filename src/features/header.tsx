@@ -1,7 +1,10 @@
 import { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
-import { AppBar, Toolbar, Typography, Button, Box, Avatar } from '@mui/material';
+import { AppBar, Toolbar, Typography, Button, Box, Avatar, Badge } from '@mui/material';
 import { userContext } from '../context/userContext';
+import { useQuery } from '@tanstack/react-query';
+import { getMyStats } from '../server/statsApi'
+
 
 const navStyle = {
     color: 'text.secondary',
@@ -15,6 +18,12 @@ const navStyle = {
 
 const Header = () => {
     const { logout, user } = useContext(userContext);
+
+    const { data: myStats } = useQuery({
+        queryKey: ['stats', 'me', user?.id],
+        queryFn: getMyStats,
+    });
+
 
     return (
         <AppBar
@@ -35,7 +44,11 @@ const Header = () => {
                 <Button component={NavLink} to="/" end sx={navStyle}>פריטים להשאלה</Button>
                 <Button component={NavLink} to="/my-items" sx={navStyle}>הפריטים שלי</Button>
                 <Button component={NavLink} to="/myRequests" sx={navStyle}>הבקשות שלי</Button>
-                <Button component={NavLink} to="/received" sx={navStyle}>בקשות שקיבלתי</Button>
+                <Button component={NavLink} to="/received" sx={navStyle}>
+                    <Badge badgeContent={myStats?.totals.pendingReceived} color="error">
+                        בקשות שקיבלתי
+                    </Badge>
+                </Button>
                 <Button component={NavLink} to="/stats" sx={navStyle}>ההשפעה שלי</Button>
                 {user?.role === 'ADMIN' && (
                     <Button component={NavLink} to="/admin" sx={navStyle}>לוח הבקרה</Button>
