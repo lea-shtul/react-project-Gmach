@@ -50,13 +50,17 @@ const ItemDetails = () => {
     ];
 
     return (
-        <Box sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, sm: 3 } }}>
-            <Button component={Link} to="/" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
-                חזרה לרשימה
-            </Button>
+        <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%', p: { xs: 2, sm: 3 } }}>
+            <Box sx={{ maxWidth: 700, mx: 'auto' }}>
+                <Button component={Link} to="/" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
+                    חזרה לרשימה
+                </Button>
+            </Box>
 
             <Box
                 sx={{
+                    maxWidth: 700,
+                    mx: 'auto',
                     bgcolor: 'background.paper',
                     border: '1px solid',
                     borderColor: 'divider',

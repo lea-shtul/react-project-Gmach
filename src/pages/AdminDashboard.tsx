@@ -69,6 +69,7 @@ const AdminDashboard = () => {
     ];
 
     return (
+        <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%', p: { xs: 2, sm: 3 } }}>
         <Stack spacing={3}>
             <Typography variant="h5">לוח בקרה</Typography>
 
@@ -165,6 +166,7 @@ const AdminDashboard = () => {
                 </Paper>
             )}
         </Stack>
+        </Box>
     );
 };
 
