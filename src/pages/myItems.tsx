@@ -5,7 +5,7 @@ import { userContext } from "../context/userContext";
 import ItemCard from "../components/ItemCard";
 import type { Item } from "../types/itemType";
 import { Link, Outlet } from "react-router-dom";
-import { Box, Button, Alert, CircularProgress } from "@mui/material";
+import { Box, Button, Alert, Skeleton } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
 import Inventory2Icon from "@mui/icons-material/Inventory2";
 import PageHeader from "../components/PageHeader";
@@ -22,8 +22,10 @@ const MyItems = () => {
 
 
     if (isLoading) return (
-        <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
-            <CircularProgress />
+        <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 2 }}>
+            {Array.from({ length: 3 }).map((_, i) => (
+                <Skeleton key={i} variant="rounded" height={260} />
+            ))}
         </Box>
     );
     if (isError) return <Alert severity="error">אירעה שגיאה בטעינת הפריטים, נסי שנית</Alert>;

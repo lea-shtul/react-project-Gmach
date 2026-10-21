@@ -3,7 +3,7 @@ import type { Item } from "../types/itemType"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllMeta } from "../server/metaApi";
 import { deletItemByIdMine } from "../server/itemApis";
-import { Alert, Box, Button, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { Alert, Box, Button, Snackbar, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
 import { alpha } from '@mui/material/styles';
 import { useState } from "react";
 import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
@@ -162,6 +162,17 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                     </Button>
                 </DialogActions>
             </Dialog>
+
+            <Snackbar
+                open={deleteMutation.isSuccess}
+                autoHideDuration={3000}
+                onClose={() => deleteMutation.reset()}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert severity="success" variant="filled" onClose={() => deleteMutation.reset()}>
+                    הפריט נמחק בהצלחה
+                </Alert>
+            </Snackbar>
         </Card >
     );
 };

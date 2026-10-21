@@ -4,7 +4,7 @@ import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { getAllMeta } from '../server/metaApi';
 import { updateRequestStatus } from '../server/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Box, Card, CardContent, Stack, Typography, Chip, Button, Link } from '@mui/material';
+import { Alert, Box, Card, CardContent, Stack, Typography, Chip, Button, Link, Snackbar } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
@@ -126,6 +126,17 @@ const RequestCard = ({ request }: RequestCardProps) => {
                     </Box>
                 )}
             </CardContent>
+
+            <Snackbar
+                open={cancelMutation.isSuccess}
+                autoHideDuration={3000}
+                onClose={() => cancelMutation.reset()}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+            >
+                <Alert severity="success" variant="filled" onClose={() => cancelMutation.reset()}>
+                    הבקשה בוטלה
+                </Alert>
+            </Snackbar>
         </Card>
     )
 }

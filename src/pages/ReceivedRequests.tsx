@@ -7,7 +7,7 @@ import type { LoanRequest, RequestStatus } from "../types/requestType"
 import ReceivedRequestCard from "../components/ReceivedRequestCard"
 import PageHeader from "../components/PageHeader"
 import EmptyState from "../components/EmptyState"
-import { Box, Stack, Tabs, Tab, Button, Alert, CircularProgress } from "@mui/material"
+import { Box, Stack, Tabs, Tab, Button, Alert, Skeleton } from "@mui/material"
 import InboxIcon from "@mui/icons-material/Inbox"
 
 type TabKey = 'pending' | 'active' | 'history';
@@ -44,9 +44,11 @@ queryFn: getRecievedRequests,
 
 
 if (isLoading) return (
-    <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
-        <CircularProgress />
-    </Box>
+    <Stack spacing={2}>
+        {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} variant="rounded" height={120} />
+        ))}
+    </Stack>
 );
 
 if (isError) return <Alert severity="error">אירעה שגיאה בהצגת הבקשות</Alert>;
