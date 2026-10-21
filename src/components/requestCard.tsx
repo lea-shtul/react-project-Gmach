@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query';
-import type { LoanRequest } from '../types/requestType';
+import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { getAllMeta } from '../server/metaApi';
-import '../style/requestCard.css';
 import { updateRequestStatus } from '../server/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Box, Card, CardContent, Stack, Typography, Chip, Button } from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 
 type RequestCardProps = {
@@ -11,6 +13,15 @@ type RequestCardProps = {
 };
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString('he-IL');
+
+const statusColor: Record<RequestStatus, 'warning' | 'success' | 'info' | 'default' | 'error'> = {
+    PENDING: 'warning',
+    APPROVED: 'success',
+    BORROWED: 'info',
+    RETURNED: 'default',
+    REJECTED: 'error',
+    CANCELLED: 'default',
+};
 
 const RequestCard = ({ request }: RequestCardProps) => {
 
@@ -32,34 +43,52 @@ const RequestCard = ({ request }: RequestCardProps) => {
     const statusLabel = meta?.statuses.find((s) => s.value === request.status)?.label;
 
     return (
-        <div className="request-card">
-            <div className="request-card__top">
-                <h3 className="request-card__title">{request.item.title}</h3>
-                <span className={`request-status request-status--${request.status.toLowerCase()}`}>
-                    {statusLabel}
-                </span>
-            </div>
+        <Card variant="outlined">
+            <CardContent>
+                <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{request.item.title}</Typography>
+                    <Chip label={statusLabel} size="small" color={statusColor[request.status]} />
+                </Stack>
 
-            <p className="request-card__dates">
-                📅 {formatDate(request.startDate)} – {formatDate(request.endDate)}
-            </p>
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1 }}>
+                    <CalendarTodayIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                        {formatDate(request.startDate)} – {formatDate(request.endDate)}
+                    </Typography>
+                </Stack>
 
-            <p className="request-card__owner">ביקשתי מ: {request.owner.fullName}</p>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    ביקשתי מ: {request.owner.fullName}
+                </Typography>
 
-            {request.owner.phone && (
-                <p className="request-card__phone">📞 {request.owner.phone}</p>
-            )}
+                {request.owner.phone && (
+                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 0.5 }}>
+                        <PhoneIcon fontSize="small" color="action" />
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{request.owner.phone}</Typography>
+                    </Stack>
+                )}
 
-            {request.message && (
-                <p className="request-card__message">"{request.message}"</p>
-            )}
+                {request.message && (
+                    <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 0.5 }}>
+                        "{request.message}"
+                    </Typography>
+                )}
 
-            {request.status === 'PENDING' && (
-                <button onClick={() => cancelMutation.mutate()} disabled={cancelMutation.isPending}>
-                    {cancelMutation.isPending ? 'מבטלת...' : 'ביטול בקשה'}
-                </button>
-            )}
-        </div>
+                {request.status === 'PENDING' && (
+                    <Box sx={{ mt: 1.5 }}>
+                        <Button
+                            variant="outlined"
+                            color="error"
+                            size="small"
+                            onClick={() => cancelMutation.mutate()}
+                            disabled={cancelMutation.isPending}
+                        >
+                            {cancelMutation.isPending ? 'מבטלת...' : 'ביטול בקשה'}
+                        </Button>
+                    </Box>
+                )}
+            </CardContent>
+        </Card>
     )
 }
 
