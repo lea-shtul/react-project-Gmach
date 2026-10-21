@@ -3,7 +3,7 @@ import { getAllItems } from '../server/itemApis'
 import ItemCard from "../components/ItemCard";
 import PageHeader from "../components/PageHeader";
 import EmptyState from "../components/EmptyState";
-import { Alert, Box, Button, CircularProgress, MenuItem, Paper, Pagination, Stack, TextField } from "@mui/material";
+import { Alert, Box, Button, MenuItem, Paper, Pagination, Skeleton, Stack, TextField } from "@mui/material";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { useState } from "react";
 import type { ItemFilters } from "../types/itemType";
@@ -37,8 +37,10 @@ const ItemsList = () => {
 
   if (isPending)
     return (
-      <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
-        <CircularProgress />
+      <Box sx={{ width: '100%', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 2 }}>
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} variant="rounded" height={260} />
+        ))}
       </Box>
     )
   if (isError)
