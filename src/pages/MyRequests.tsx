@@ -24,7 +24,7 @@ if (isLoading) return (
     </Box>
 );
 
-if (isError) return <Alert severity="error">ארעה שגיאה בהצגת הבקשות</Alert>;
+if (isError) return <Alert severity="error">אירעה שגיאה בהצגת הבקשות</Alert>;
 if (!requests) return null;
 if (requests.length === 0) return <Typography color="text.secondary">עוד לא שלחת בקשות</Typography>;
 return (

@@ -125,7 +125,7 @@ const ReceivedRequestCard = ({ request }: RequestCardProps) => {
 
                 {statusMutation.isError && (
                     <Box sx={{ mt: 1.5 }}>
-                        <Alert severity="error">לא ניתן לעדכן את הבקשה נסה שוב יותר מאוחר .</Alert>
+                        <Alert severity="error">לא ניתן לעדכן את הבקשה, נסי שוב יותר מאוחר.</Alert>
                     </Box>
                 )}
             </CardContent>

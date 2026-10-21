@@ -21,9 +21,9 @@ if (isLoading) return (
     </Box>
 );
 
-if (isError) return <Alert severity="error">ארעה שגיאה בהצגת הבקשות</Alert>;
+if (isError) return <Alert severity="error">אירעה שגיאה בהצגת הבקשות</Alert>;
 if (!requests) return null;
-if (requests.length === 0) return <Typography color="text.secondary">עוד לא קבלתת בקשות </Typography>;
+if (requests.length === 0) return <Typography color="text.secondary">עוד לא קיבלת בקשות</Typography>;
 return (
   <Stack spacing={2}>
     {requests.map((r) => <ReceivedRequestCard key={r.id} request={r} />)}
