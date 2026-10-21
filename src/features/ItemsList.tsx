@@ -1,7 +1,7 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { getAllItems } from '../server/itemApis'
 import ItemCard from "../components/ItemCard";
-import { Box, MenuItem, Pagination, Stack, TextField } from "@mui/material";
+import { Alert, Box, CircularProgress, MenuItem, Pagination, Stack, TextField } from "@mui/material";
 import { useState } from "react";
 import type { ItemFilters } from "../types/itemType";
 import { getAllMeta } from "../server/metaApi";
@@ -31,9 +31,13 @@ const ItemsList = () => {
 
 
   if (isPending)
-    return <p>טוען מוצרים</p>
+    return (
+      <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
+        <CircularProgress />
+      </Box>
+    )
   if (isError)
-    return <p>שגיאה בטעינן המוצרים</p>
+    return <Alert severity="error">שגיאה בטעינן המוצרים</Alert>
 
   const pageCount = Math.ceil(data.total / data.pageSize);
   return (
