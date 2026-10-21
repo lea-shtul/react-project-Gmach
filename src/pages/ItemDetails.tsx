@@ -3,10 +3,11 @@ import { Link, useParams } from "react-router-dom"
 import type { Item } from "../types/itemType"
 import { getItemById } from "../server/itemApis"
 import { getAllMeta } from "../server/metaApi"
-import '../style/item.css'
 import { useContext } from "react"
 import { userContext } from "../context/userContext"
 import RequestForm from "../components/requesrForm"
+import { Box, Stack, Chip, Typography, Button, Alert, CircularProgress } from "@mui/material"
+import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 
 
 
@@ -26,64 +27,93 @@ const ItemDetails = () => {
     const { user } = useContext(userContext);
     const isOwner = user?.id == item?.ownerId
 
-    if (isLoading) return <p>טוען...</p>
-    if (isError) return <p>הפריט לא נמצא</p>
+    if (isLoading) return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
+            <CircularProgress />
+        </Box>
+    );
+    if (isError) return (
+        <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+            <Alert severity="error">הפריט לא נמצא</Alert>
+        </Box>
+    );
     if (!item) return null;
 
     const categoryLabel = meta?.categories.find((c) => c.value === item.category)?.label;
     const conditionLabel = meta?.conditions.find((c) => c.value === item.condition)?.label;
 
-
+    const infoItems = [
+        { label: 'מצב', value: conditionLabel },
+        { label: 'שכונה', value: item.neighborhood },
+        { label: 'מפרסמת', value: item.owner.fullName },
+        { label: 'פורסם בתאריך', value: new Date(item.createdAt).toLocaleDateString('he-IL') },
+    ];
 
     return (
-        <div className="details">
-            <Link to="/" className="details__back">→ חזרה לרשימה</Link>
+        <Box sx={{ maxWidth: 700, mx: 'auto', p: { xs: 2, sm: 3 } }}>
+            <Button component={Link} to="/" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
+                חזרה לרשימה
+            </Button>
 
-            <div className="details__card">
-                <div className="details__badges">
-                    <span className="badge badge--category">{categoryLabel}</span>
-                    {!item.isPublic && <span className="badge badge--private">פרטי</span>}
-                    <span className={item.isAvailable ? 'status status--available' : 'status status--unavailable'}>
-                        {item.isAvailable ? 'זמין להשאלה' : 'מושאל כרגע'}
-                    </span>
-                </div>
+            <Box
+                sx={{
+                    bgcolor: 'background.paper',
+                    border: '1px solid',
+                    borderColor: 'divider',
+                    borderRadius: 3,
+                    p: 3,
+                }}
+            >
+                <Stack direction="row" spacing={1} sx={{ flexWrap: 'wrap' }}>
+                    <Chip label={categoryLabel} size="small" color="primary" variant="outlined" />
+                    {!item.isPublic && <Chip label="פרטי" size="small" />}
+                    <Chip
+                        label={item.isAvailable ? 'זמין להשאלה' : 'מושאל כרגע'}
+                        size="small"
+                        color={item.isAvailable ? 'success' : 'error'}
+                    />
+                </Stack>
 
-                <h1 className="details__title">{item.title}</h1>
+                <Typography variant="h5" sx={{ mt: 1.5, mb: 1 }}>{item.title}</Typography>
 
-                {item.description && <p className="details__description">{item.description}</p>}
+                {item.description && (
+                    <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+                        {item.description}
+                    </Typography>
+                )}
 
-                <dl className="details__info">
-                    <div>
-                        <dt>מצב</dt>
-                        <dd>{conditionLabel}</dd>
-                    </div>
-                    <div>
-                        <dt>שכונה</dt>
-                        <dd>{item.neighborhood}</dd>
-                    </div>
-                    <div>
-                        <dt>מפרסמת</dt>
-                        <dd>{item.owner.fullName}</dd>
-                    </div>
-                    <div>
-                        <dt>פורסם בתאריך</dt>
-                        <dd>{new Date(item.createdAt).toLocaleDateString('he-IL')}</dd>
-                    </div>
-                </dl>
+                <Box
+                    sx={{
+                        display: 'grid',
+                        gridTemplateColumns: 'repeat(auto-fit, minmax(140px, 1fr))',
+                        gap: 2,
+                        mt: 3,
+                        pt: 2,
+                        borderTop: '1px solid',
+                        borderColor: 'divider',
+                    }}
+                >
+                    {infoItems.map(({ label, value }) => (
+                        <Box key={label}>
+                            <Typography variant="caption" color="text.secondary">{label}</Typography>
+                            <Typography variant="body2" sx={{ fontWeight: 600 }}>{value}</Typography>
+                        </Box>
+                    ))}
+                </Box>
 
-                <div className="details__actions">
+                <Box sx={{ mt: 3 }}>
                     {isOwner ? (
-                        <Link to={`/my-items/${item.id}/edit`} className="btn btn--primary">
+                        <Button variant="contained" component={Link} to={`/my-items/${item.id}/edit`}>
                             עריכת הפריט
-                        </Link>
+                        </Button>
                     ) : item.isAvailable ? (
                         <RequestForm itemId={item.id} />
                     ) : (
-                        <p>הפריט מושאל כרגע. אפשר לחזור מאוחר יותר</p>
+                        <Alert severity="info">הפריט מושאל כרגע. אפשר לחזור מאוחר יותר</Alert>
                     )}
-                </div>
-            </div>
-        </div>
+                </Box>
+            </Box>
+        </Box>
     );
 };
 
