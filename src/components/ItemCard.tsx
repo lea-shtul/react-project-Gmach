@@ -3,10 +3,10 @@ import type { Item } from "../types/itemType"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllMeta } from "../server/metaApi";
 import { deletItemByIdMine } from "../server/itemApis";
-import { Alert, Box, Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { Alert, Box, Button, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { alpha } from '@mui/material/styles';
 import { useState } from "react";
 import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
-import StarIcon from '@mui/icons-material/Star';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import KitchenIcon from '@mui/icons-material/Kitchen';
 import CelebrationIcon from '@mui/icons-material/Celebration';
@@ -71,8 +71,8 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
             >
                 <Box
                     sx={{
-                        bgcolor: categoryColor,
-                        color: '#fff',
+                        bgcolor: alpha(categoryColor, 0.12),
+                        color: categoryColor,
                         py: 2.5,
                         display: 'flex',
                         flexDirection: 'column',
@@ -105,18 +105,17 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                         </Typography>
                     )}
 
-                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1.5 }}>
+                    <Stack direction="row" spacing={1} sx={{ alignItems: 'center', mt: 1.5 }}>
                         <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
                             <LocationOnOutlined fontSize="small" color="action" />
                             <Typography variant="body2" color="text.secondary">{item.neighborhood}</Typography>
                         </Stack>
 
-                        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                            <StarIcon fontSize="small" color="action" />
-                            <Typography variant="body2" color="text.secondary">
-                                {meta?.conditions.find((c) => c.value === item.condition)?.label}
-                            </Typography>
-                        </Stack>
+                        <Chip
+                            label={meta?.conditions.find((c) => c.value === item.condition)?.label}
+                            size="small"
+                            variant="outlined"
+                        />
                     </Stack>
 
                     <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 'auto', pt: 2 }}>
@@ -131,14 +130,14 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
             </CardActionArea>
             {
                 showActions && (
-                    <Stack direction="row" spacing={1}>
-                        <Button variant="outlined" component={Link} to={`/my-items/${item.id}/edit`}>
+                    <CardActions sx={{ gap: 1, px: 2, pb: 2 }}>
+                        <Button variant="outlined" size="small" component={Link} to={`/my-items/${item.id}/edit`}>
                             עריכה
                         </Button>
                         <Button variant="outlined" size="small" color="error" onClick={() => setConfirmOpen(true)}>
                             מחיקה
                         </Button>
-                    </Stack>
+                    </CardActions>
                 )
             }
 
