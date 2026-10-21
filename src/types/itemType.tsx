@@ -42,3 +42,11 @@ category:string,
 neighborhood:string,
 isPublic?:boolean,
 }
+
+
+export type ItemFilters = {
+  page: number;
+  search: string;
+  category: string;
+  sort: string;
+};
