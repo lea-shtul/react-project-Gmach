@@ -37,7 +37,7 @@ const ItemsList = () => {
       </Box>
     )
   if (isError)
-    return <Alert severity="error">שגיאה בטעינן המוצרים</Alert>
+    return <Alert severity="error">שגיאה בטעינת המוצרים</Alert>
 
   const pageCount = Math.ceil(data.total / data.pageSize);
   return (

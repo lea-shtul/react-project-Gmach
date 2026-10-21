@@ -23,7 +23,7 @@ const MyItems = () => {
             <CircularProgress />
         </Box>
     );
-    if (isError) return <Alert severity="error">ארעה שגיאה בטעינת הבקשות , נסה שנית</Alert>;
+    if (isError) return <Alert severity="error">אירעה שגיאה בטעינת הפריטים, נסי שנית</Alert>;
     if (!data) return null
 
     return (
@@ -39,7 +39,7 @@ const MyItems = () => {
 
             {data.items.length === 0 ? (
                 <Typography color="text.secondary" sx={{ mt: 2 }}>
-                    עדיין לא פרסמת פרטים , קדימה תעשה את הצעד הראשון ופרסם
+                    עדיין לא פרסמת פריטים, קדימה תעשי את הצעד הראשון ופרסמי
                 </Typography>
             ) : (
                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 2, mt: 2 }}>
