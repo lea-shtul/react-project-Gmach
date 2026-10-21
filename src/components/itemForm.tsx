@@ -10,7 +10,7 @@ import { userContext } from "../context/userContext";
 import type { Item, newItem } from "../types/itemType";
 import {
     Box, Paper, Typography, TextField, MenuItem, Checkbox, FormControlLabel,
-    Button, Stack, Alert, CircularProgress, Snackbar,
+    Button, Stack, Alert, CircularProgress,
 } from "@mui/material";
 
 
@@ -212,17 +212,6 @@ const ItemForm = () => {
                     </Button>
                 </Stack>
             </Stack>
-
-            <Snackbar
-                open={mutation.isSuccess}
-                autoHideDuration={3000}
-                onClose={() => mutation.reset()}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="success" variant="filled" onClose={() => mutation.reset()}>
-                    {isEdit ? 'השינויים נשמרו בהצלחה' : 'הפריט נוסף בהצלחה'}
-                </Alert>
-            </Snackbar>
         </Paper>
     )
 }
