@@ -3,15 +3,32 @@ import type { Item } from "../types/itemType"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllMeta } from "../server/metaApi";
 import { deletItemByIdMine } from "../server/itemApis";
-import { Alert, Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { Alert, Box, Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
 import { useState } from "react";
 import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
 import StarIcon from '@mui/icons-material/Star';
+import ChildCareIcon from '@mui/icons-material/ChildCare';
+import KitchenIcon from '@mui/icons-material/Kitchen';
+import CelebrationIcon from '@mui/icons-material/Celebration';
+import MenuBookIcon from '@mui/icons-material/MenuBook';
+import CardGiftcardIcon from '@mui/icons-material/CardGiftcard';
+import BuildIcon from '@mui/icons-material/Build';
+import CategoryIcon from '@mui/icons-material/Category';
 
 type ItemCardProps = {
     item: Item;
     showActions?: boolean;
 };
+
+const CATEGORY_STYLE: Record<string, { color: string; icon: typeof CategoryIcon }> = {
+    BABY: { color: '#ec4899', icon: ChildCareIcon },
+    KITCHEN: { color: '#f97316', icon: KitchenIcon },
+    EVENTS: { color: '#8b5cf6', icon: CelebrationIcon },
+    BOOKS: { color: '#3b82f6', icon: MenuBookIcon },
+    HOLIDAY: { color: '#ef4444', icon: CardGiftcardIcon },
+    TOOLS: { color: '#64748b', icon: BuildIcon },
+};
+const DEFAULT_CATEGORY_STYLE = { color: '#6b7280', icon: CategoryIcon };
 
 const ItemCard = ({ item, showActions }: ItemCardProps) => {
 
@@ -32,30 +49,60 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
         }
     })
 
+    const categoryLabel = meta?.categories.find((c) => c.value === item.category)?.label;
+    const { color: categoryColor, icon: CategoryIconComp } = CATEGORY_STYLE[item.category] ?? DEFAULT_CATEGORY_STYLE;
+
     return (
         <Card
             variant="outlined"
             sx={{
                 height: '100%',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden',
                 transition: '0.2s',
-                '&:hover': { boxShadow: 4, transform: 'translateY(-2px)' },
+                '&:hover': { boxShadow: 6, transform: 'translateY(-4px)' },
             }}
         >
-            <CardActionArea component={Link} to={`/items/${item.id}`}>
-                <CardContent>
-                    <Stack direction="row" spacing={1} sx={{ mb: 1.5 }}>
-                        <Chip
-                            label={meta?.categories.find((c) => c.value === item.category)?.label}
-                            size="small"
-                            color="primary"
-                            variant="outlined"
-                        />
-                        {!item.isPublic && <Chip label="פרטי" size="small" />}
-                    </Stack>
+            <CardActionArea
+                component={Link}
+                to={`/items/${item.id}`}
+                sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column', alignItems: 'stretch' }}
+            >
+                <Box
+                    sx={{
+                        bgcolor: categoryColor,
+                        color: '#fff',
+                        py: 2.5,
+                        display: 'flex',
+                        flexDirection: 'column',
+                        alignItems: 'center',
+                        gap: 0.5,
+                    }}
+                >
+                    <CategoryIconComp sx={{ fontSize: 36 }} />
+                    <Typography variant="caption" sx={{ fontWeight: 600 }}>{categoryLabel}</Typography>
+                </Box>
+
+                <CardContent sx={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                    {!item.isPublic && (
+                        <Chip label="פרטי" size="small" sx={{ alignSelf: 'flex-start', mb: 1.5 }} />
+                    )}
                     <Typography variant="h6" gutterBottom>{item.title}</Typography>
 
                     {item.description && (
-                        <Typography variant="body2" color="text.secondary">{item.description}</Typography>
+                        <Typography
+                            variant="body2"
+                            color="text.secondary"
+                            sx={{
+                                display: '-webkit-box',
+                                WebkitLineClamp: 2,
+                                WebkitBoxOrient: 'vertical',
+                                overflow: 'hidden',
+                            }}
+                        >
+                            {item.description}
+                        </Typography>
                     )}
 
                     <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1.5 }}>
@@ -72,7 +119,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                         </Stack>
                     </Stack>
 
-                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 2 }}>
+                    <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mt: 'auto', pt: 2 }}>
                         <Typography variant="body2" color="text.secondary">{item.owner.fullName}</Typography>
                         <Chip
                             label={item.isAvailable ? 'זמין' : 'מושאל'}
