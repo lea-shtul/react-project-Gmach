@@ -1,15 +1,17 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { getAllMeta } from "../server/metaApi"
 import * as yup from 'yup'
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { createItem, getItemById, updateItem } from "../server/itemApis";
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { userContext } from "../context/userContext";
-import "../style/requestForm.css"
 import type { Item, newItem } from "../types/itemType";
-import { Button } from "@mui/material";
+import {
+    Box, Paper, Typography, TextField, MenuItem, Checkbox, FormControlLabel,
+    Button, Stack, Alert, CircularProgress,
+} from "@mui/material";
 
 
 
@@ -58,7 +60,7 @@ const ItemForm = () => {
     const navigate = useNavigate()
 
     const {
-        register,
+        control,
         handleSubmit,
         formState: { errors },
     } = useForm({
@@ -85,54 +87,132 @@ const ItemForm = () => {
     const onSubmit = (data: ItemFormData) => {
         mutation.mutate(data)
     }
-    if (!meta || (isEdit && !item)) return <p>טוען...</p>;
+    if (!meta || (isEdit && !item)) return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
+            <CircularProgress />
+        </Box>
+    );
     return (
-        <form className="request-form" onSubmit={handleSubmit(onSubmit)}>
-            <h2>{isEdit ? 'עריכת פריט' : 'הוספת פריט חדש'}</h2>
+        <Paper elevation={2} sx={{ p: { xs: 2, sm: 3 }, maxWidth: 600, mx: 'auto' }}>
+            <Typography variant="h5" sx={{ mb: 2 }}>
+                {isEdit ? 'עריכת פריט' : 'הוספת פריט חדש'}
+            </Typography>
 
-            <label htmlFor="title">שם הפריט</label>
-            <input id="title" {...register('title')} />
-            {errors.title && <p className="error">{errors.title.message}</p>}
+            <Stack component="form" onSubmit={handleSubmit(onSubmit)} spacing={2}>
+                <Controller
+                    name="title"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="שם הפריט"
+                            error={!!errors.title}
+                            helperText={errors.title?.message}
+                            fullWidth
+                        />
+                    )}
+                />
 
-            <label htmlFor="description">תיאור (לא חובה)</label>
-            <textarea id="description" rows={3} {...register('description')} />
-            {errors.description && <p className="error">{errors.description.message}</p>}
+                <Controller
+                    name="description"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            label="תיאור (לא חובה)"
+                            multiline
+                            rows={3}
+                            error={!!errors.description}
+                            helperText={errors.description?.message}
+                            fullWidth
+                        />
+                    )}
+                />
 
-            <label htmlFor="category">קטגוריה</label>
-            <select id="category" {...register('category')}>
-                <option value="" disabled>בחרי קטגוריה</option>
-                {meta?.categories.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </select>
-            {errors.category && <p className="error">{errors.category.message}</p>}
+                <Controller
+                    name="category"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            select
+                            label="קטגוריה"
+                            error={!!errors.category}
+                            helperText={errors.category?.message}
+                            fullWidth
+                        >
+                            {meta?.categories.map((c) => (
+                                <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>
+                            ))}
+                        </TextField>
+                    )}
+                />
 
-            <label htmlFor="condition">מצב</label>
-            <select id="condition" {...register('condition')}>
-                <option value="" disabled>בחרי מצב</option>
-                {meta?.conditions.map((c) => <option key={c.value} value={c.value}>{c.label}</option>)}
-            </select>
-            {errors.condition && <p className="error">{errors.condition.message}</p>}
+                <Controller
+                    name="condition"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            select
+                            label="מצב"
+                            error={!!errors.condition}
+                            helperText={errors.condition?.message}
+                            fullWidth
+                        >
+                            {meta?.conditions.map((c) => (
+                                <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>
+                            ))}
+                        </TextField>
+                    )}
+                />
 
-            <label htmlFor="neighborhood">שכונה</label>
-            <select id="neighborhood" {...register('neighborhood')}>
-                <option value="" disabled>בחרי שכונה</option>
-                {meta?.neighborhoods.map((n) => <option key={n.value} value={n.value}>{n.label}</option>)}
-            </select>
-            {errors.neighborhood && <p className="error">{errors.neighborhood.message}</p>}
+                <Controller
+                    name="neighborhood"
+                    control={control}
+                    render={({ field }) => (
+                        <TextField
+                            {...field}
+                            select
+                            label="שכונה"
+                            error={!!errors.neighborhood}
+                            helperText={errors.neighborhood?.message}
+                            fullWidth
+                        >
+                            {meta?.neighborhoods.map((n) => (
+                                <MenuItem key={n.value} value={n.value}>{n.label}</MenuItem>
+                            ))}
+                        </TextField>
+                    )}
+                />
 
-            <label>
-                <input type="checkbox" {...register('isPublic')} />
-                פריט ציבורי (אם לא מסומן, רק את תראי אותו)
-            </label>
+                <Controller
+                    name="isPublic"
+                    control={control}
+                    render={({ field }) => (
+                        <FormControlLabel
+                            control={<Checkbox checked={field.value} onChange={field.onChange} />}
+                            label="פריט ציבורי (אם לא מסומן, רק את תראי אותו)"
+                        />
+                    )}
+                />
 
-            <Button type="submit" disabled={mutation.isPending} variant="contained" >
-                {mutation.isPending ? 'שומרת...' : isEdit ? 'שמירת שינויים' : 'הוספת פריט'}
-            </Button>
-            <Button type="button" variant="contained" onClick={() => navigate('/my-items')}>ביטול</Button>
+                {mutation.isError && (
+                    <Alert severity="error">
+                        {isEdit ? 'לא ניתן לשמור את השינויים' : 'לא ניתן להוסיף את הפריט'}, נסי שוב.
+                    </Alert>
+                )}
 
-            {mutation.isError && (
-                <p className="error">{isEdit ? 'לא ניתן לשמור את השינויים' : 'לא ניתן להוסיף את הפריט'}, נסי שוב.</p>
-            )}
-        </form>
+                <Stack direction="row" spacing={2}>
+                    <Button type="submit" disabled={mutation.isPending} variant="contained">
+                        {mutation.isPending ? 'שומרת...' : isEdit ? 'שמירת שינויים' : 'הוספת פריט'}
+                    </Button>
+                    <Button type="button" variant="outlined" onClick={() => navigate('/my-items')}>
+                        ביטול
+                    </Button>
+                </Stack>
+            </Stack>
+        </Paper>
     )
 }
 export default ItemForm
