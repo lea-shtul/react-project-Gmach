@@ -4,9 +4,13 @@ import * as yup from 'yup'
 import "../style/requestForm.css"
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createRequest } from '../server/requests';
+import { useState } from 'react';
+import { Alert, Snackbar } from '@mui/material';
 
 
 type RequestFormProps = { itemId: string };
+
+
 
 const schema = yup.object(
     {
@@ -20,6 +24,9 @@ type RequestFormData = yup.InferType<typeof schema>;
 
 const RequestForm = ({ itemId }: RequestFormProps) => {
 
+
+    const [snackOpen, setSnackOpen] = useState(false);
+
     const { register, handleSubmit, watch, formState: { errors }, reset } =
         useForm<RequestFormData>({ resolver: yupResolver(schema) });
 
@@ -28,6 +35,7 @@ const RequestForm = ({ itemId }: RequestFormProps) => {
         mutationFn: createRequest,
         onSuccess: () => {
             reset();
+            setSnackOpen(true);
             queryClient.invalidateQueries({ queryKey: ['myRequests'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
         },
@@ -73,9 +81,18 @@ const RequestForm = ({ itemId }: RequestFormProps) => {
                 {mutation.isPending ? 'שולחת...' : 'שליחת בקשה'}
             </button>
 
-            {mutation.isSuccess && (
-                <p className="success">הבקשה נשלחה! הבעלים תאשר או תדחה אותה.</p>
-            )}
+            
+                <Snackbar
+                    open={snackOpen}
+                    autoHideDuration={3000}
+                    onClose={() => setSnackOpen(false)}
+                    anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                >
+                    <Alert severity="success" variant="filled" onClose={() => setSnackOpen(false)}>
+                        הבקשה נשלחה! הבעלים תאשר או תדחה אותה 🎉
+                    </Alert>
+                </Snackbar>
+            
             {mutation.isError && (
                 <p className="error">
                     לא ניתן לשלוח את הבקשה. ייתכן שכבר שלחת בקשה על הפריט הזה, או שהתאריכים תפוסים.

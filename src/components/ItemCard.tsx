@@ -4,7 +4,8 @@ import '../style/item.css'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllMeta } from "../server/metaApi";
 import { deletItemByIdMine } from "../server/itemApis";
-import { Button, Stack, Card, CardActionArea, CardContent, Chip, Typography } from '@mui/material'
+import { Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { useState } from "react";
 // import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
 // import StarIcon from '@mui/icons-material/Star';
 
@@ -14,6 +15,8 @@ type ItemCardProps = {
 };
 
 const ItemCard = ({ item, showActions }: ItemCardProps) => {
+
+    const [confirmOpen, setConfirmOpen] = useState(false);
 
     const { data: meta } = useQuery({
         queryKey: ['meta'],
@@ -26,6 +29,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['items'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
+            setConfirmOpen(false);
         }
     })
 
@@ -87,22 +91,34 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                         <Button variant="outlined" component={Link} to={`/my-items/${item.id}/edit`}>
                             עריכה
                         </Button>
-                        <Button
-                            variant="outlined"
-                            color="error"
-                            disabled={deleteMutation.isPending}
-                            onClick={() => {
-                                if (!confirm('למחוק את הפריט?')) return;
-                                deleteMutation.mutate(item.id);
-                            }}
-                        >
-                            {deleteMutation.isPending ? 'מוחקת...' : 'מחיקה'}
+                        <Button variant="outlined" size="small" color="error" onClick={() => setConfirmOpen(true)}>
+                            מחיקה
                         </Button>
                     </Stack>
                 )
             }
 
             {deleteMutation.isError && <p className="error">לא ניתן למחוק פריט שנמצא בהשאלה</p>}
+
+            <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
+                <DialogTitle>למחוק את "{item.title}"?</DialogTitle>
+                <DialogContent>
+                    <DialogContentText>
+                        הפריט יימחק לצמיתות, ולא ניתן יהיה לשחזר אותו.
+                    </DialogContentText>
+                </DialogContent>
+                <DialogActions>
+                    <Button onClick={() => setConfirmOpen(false)}>ביטול</Button>
+                    <Button
+                        color="error"
+                        variant="contained"
+                        disabled={deleteMutation.isPending}
+                        onClick={() => deleteMutation.mutate(item.id)}
+                    >
+                        {deleteMutation.isPending ? 'מוחקת...' : 'מחיקה'}
+                    </Button>
+                </DialogActions>
+            </Dialog>
         </Card >
     );
 };
