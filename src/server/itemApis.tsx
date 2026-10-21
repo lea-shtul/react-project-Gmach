@@ -8,6 +8,7 @@ export const getAllItems = async (filters: ItemFilters) => {
     sort: filters.sort,
     search: filters.search || undefined,
     category: filters.category || undefined,
+    neighborhood: filters.neighborhood || undefined,
   };
   const res = await api.get<ItemsResponse>('/items', { params });
   return res.data;

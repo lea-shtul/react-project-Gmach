@@ -49,4 +49,5 @@ export type ItemFilters = {
   search: string;
   category: string;
   sort: string;
+  neighborhood: string
 };

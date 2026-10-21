@@ -13,6 +13,7 @@ const ItemsList = () => {
     search: '',
     category: '',
     sort: 'newest',
+    neighborhood: ''
   });
 
   const { data, isPending, isError } = useQuery({
@@ -55,6 +56,18 @@ const ItemsList = () => {
           <MenuItem value="">הכל</MenuItem>
           {meta?.categories.map((c) => (
             <MenuItem key={c.value} value={c.value}>{c.label}</MenuItem>
+          ))}
+        </TextField>
+        <TextField
+          select
+          label="שכונה"
+          value={filters.neighborhood}
+          onChange={(e) => setFilters({ ...filters, neighborhood: e.target.value, page: 1 })}
+          sx={{ minWidth: 160 }}
+        >
+          <MenuItem value="">כל השכונות</MenuItem>
+          {meta?.neighborhoods.map((n) => (
+            <MenuItem key={n.value} value={n.value}>{n.label}</MenuItem>
           ))}
         </TextField>
 
