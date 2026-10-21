@@ -25,7 +25,6 @@ const ItemDetails = () => {
     });
     const { user } = useContext(userContext);
     const isOwner = user?.id == item?.ownerId
-    const isAdmin = user?.role == "ADMIN"
 
     if (isLoading) return <p>טוען...</p>
     if (isError) return <p>הפריט לא נמצא</p>
