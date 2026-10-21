@@ -2,13 +2,24 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { getAllMeta } from '../server/metaApi';
 import { updateRequestStatus } from '../server/requests';
-import '../style/requestCard.css';
+import { Box, Card, CardContent, Stack, Typography, Chip, Button, Alert } from '@mui/material';
+import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
+import PhoneIcon from '@mui/icons-material/Phone';
 
 type RequestCardProps = {
     request: LoanRequest;
 };
 
 const formatDate = (date: string) => new Date(date).toLocaleDateString('he-IL');
+
+const statusColor: Record<RequestStatus, 'warning' | 'success' | 'info' | 'default' | 'error'> = {
+    PENDING: 'warning',
+    APPROVED: 'success',
+    BORROWED: 'info',
+    RETURNED: 'default',
+    REJECTED: 'error',
+    CANCELLED: 'default',
+};
 
 const ReceivedRequestCard = ({ request }: RequestCardProps) => {
     const { data: meta } = useQuery({
@@ -34,75 +45,91 @@ const ReceivedRequestCard = ({ request }: RequestCardProps) => {
     const isPending = statusMutation.isPending;
 
     return (
-        <div className="request-card">
-            <div className="request-card__top">
-                <h3 className="request-card__title">{request.item.title}</h3>
-                <span className={`request-status request-status--${request.status.toLowerCase()}`}>
-                    {statusLabel}
-                </span>
-            </div>
+        <Card variant="outlined">
+            <CardContent>
+                <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', gap: 1 }}>
+                    <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>{request.item.title}</Typography>
+                    <Chip label={statusLabel} size="small" color={statusColor[request.status]} />
+                </Stack>
 
-            <p className="request-card__dates">
-                📅 {formatDate(request.startDate)} – {formatDate(request.endDate)}
-            </p>
+                <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1 }}>
+                    <CalendarTodayIcon fontSize="small" color="action" />
+                    <Typography variant="body2" color="text.secondary">
+                        {formatDate(request.startDate)} – {formatDate(request.endDate)}
+                    </Typography>
+                </Stack>
 
-            <p className="request-card__owner">
-                מבקשת: {request.borrower.fullName} ({request.borrower.neighborhood})
-            </p>
+                <Typography variant="body2" color="text.secondary" sx={{ mt: 0.5 }}>
+                    מבקשת: {request.borrower.fullName} ({request.borrower.neighborhood})
+                </Typography>
 
-            {request.borrower.phone && (
-                <p className="request-card__phone">📞 {request.borrower.phone}</p>
-            )}
+                {request.borrower.phone && (
+                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 0.5 }}>
+                        <PhoneIcon fontSize="small" color="action" />
+                        <Typography variant="body2" sx={{ fontWeight: 600 }}>{request.borrower.phone}</Typography>
+                    </Stack>
+                )}
 
-            {request.message && (
-                <p className="request-card__message">"{request.message}"</p>
-            )}
+                {request.message && (
+                    <Typography variant="body2" sx={{ fontStyle: 'italic', mt: 0.5 }}>
+                        "{request.message}"
+                    </Typography>
+                )}
 
-            <div className="request-card__actions">
-                {request.status === 'PENDING' && (
-                    <>
-                        <button
-                            className="btn btn--approve"
+                <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
+                    {request.status === 'PENDING' && (
+                        <>
+                            <Button
+                                variant="contained"
+                                color="success"
+                                size="small"
+                                disabled={isPending}
+                                onClick={() => statusMutation.mutate('APPROVED')}
+                            >
+                                אישור
+                            </Button>
+                            <Button
+                                variant="outlined"
+                                color="error"
+                                size="small"
+                                disabled={isPending}
+                                onClick={() => statusMutation.mutate('REJECTED')}
+                            >
+                                דחייה
+                            </Button>
+                        </>
+                    )}
+
+                    {request.status === 'APPROVED' && (
+                        <Button
+                            variant="contained"
+                            size="small"
                             disabled={isPending}
-                            onClick={() => statusMutation.mutate('APPROVED')}
+                            onClick={() => statusMutation.mutate('BORROWED')}
                         >
-                            אישור
-                        </button>
-                        <button
-                            className="btn btn--reject"
+                            הפריט נמסר
+                        </Button>
+                    )}
+
+                    {request.status === 'BORROWED' && (
+                        <Button
+                            variant="contained"
+                            size="small"
                             disabled={isPending}
-                            onClick={() => statusMutation.mutate('REJECTED')}
+                            onClick={() => statusMutation.mutate('RETURNED')}
                         >
-                            דחייה
-                        </button>
-                    </>
-                )}
+                            הפריט הוחזר
+                        </Button>
+                    )}
+                </Stack>
 
-                {request.status === 'APPROVED' && (
-                    <button
-                        className="btn btn--primary"
-                        disabled={isPending}
-                        onClick={() => statusMutation.mutate('BORROWED')}
-                    >
-                        הפריט נמסר
-                    </button>
+                {statusMutation.isError && (
+                    <Box sx={{ mt: 1.5 }}>
+                        <Alert severity="error">לא ניתן לעדכן את הבקשה נסה שוב יותר מאוחר .</Alert>
+                    </Box>
                 )}
-
-                {request.status === 'BORROWED' && (
-                    <button
-                        className="btn btn--primary"
-                        disabled={isPending}
-                        onClick={() => statusMutation.mutate('RETURNED')}
-                    >
-                        הפריט הוחזר
-                    </button>
-                )}
-            </div>
-
-            {statusMutation.isError && (
-                <p className="error">לא ניתן לעדכן את הבקשה נסה שוב יותר מאוחר .</p>
-            )}
-        </div>
+            </CardContent>
+        </Card>
     );
 };
 
