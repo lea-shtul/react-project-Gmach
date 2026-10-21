@@ -1,4 +1,4 @@
-import { useContext, useState } from 'react';
+import { useContext, useState, type FormEvent } from 'react';
 import {Box, Paper, Typography, TextField, Button, Alert, Stack, Link,} from '@mui/material';
 import { userContext } from '../context/userContext';
 import { Link as RouterLink } from 'react-router-dom';
@@ -10,7 +10,7 @@ export const Login = () =>{
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useContext(userContext);
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError('');
     setIsLoading(true);
