@@ -1,13 +1,12 @@
 import { Link } from "react-router-dom";
 import type { Item } from "../types/itemType"
-import '../style/item.css'
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { getAllMeta } from "../server/metaApi";
 import { deletItemByIdMine } from "../server/itemApis";
-import { Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { Alert, Button, Stack, Card, CardActionArea, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
 import { useState } from "react";
-// import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
-// import StarIcon from '@mui/icons-material/Star';
+import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
+import StarIcon from '@mui/icons-material/Star';
 
 type ItemCardProps = {
     item: Item;
@@ -61,14 +60,12 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
 
                     <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mt: 1.5 }}>
                         <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                            <Typography variant="body2">📍</Typography>
-                            {/* <LocationOnOutlined fontSize="small" color="action" /> */}
+                            <LocationOnOutlined fontSize="small" color="action" />
                             <Typography variant="body2" color="text.secondary">{item.neighborhood}</Typography>
                         </Stack>
 
                         <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
-                            {/* <StarIcon fontSize="small" color="action" /> */}
-                            <Typography variant="body2">✨</Typography>
+                            <StarIcon fontSize="small" color="action" />
                             <Typography variant="body2" color="text.secondary">
                                 {meta?.conditions.find((c) => c.value === item.condition)?.label}
                             </Typography>
@@ -98,7 +95,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                 )
             }
 
-            {deleteMutation.isError && <p className="error">לא ניתן למחוק פריט שנמצא בהשאלה</p>}
+            {deleteMutation.isError && <Alert severity="error" sx={{ m: 1 }}>לא ניתן למחוק פריט שנמצא בהשאלה</Alert>}
 
             <Dialog open={confirmOpen} onClose={() => setConfirmOpen(false)}>
                 <DialogTitle>למחוק את "{item.title}"?</DialogTitle>

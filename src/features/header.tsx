@@ -1,6 +1,7 @@
 import { useContext } from 'react';
 import { Link, NavLink } from 'react-router-dom';
 import { AppBar, Toolbar, Typography, Button, Box, Avatar, Badge } from '@mui/material';
+import HandshakeIcon from '@mui/icons-material/Handshake';
 import { userContext } from '../context/userContext';
 import { useQuery } from '@tanstack/react-query';
 import { getMyStats } from '../server/statsApi'
@@ -29,16 +30,20 @@ const Header = () => {
         <AppBar
             position="sticky"
             elevation={0}
-            sx={{ bgcolor: 'white', borderBottom: '1px solid #e5e7eb' }}
+            sx={{ bgcolor: 'background.paper', borderBottom: '1px solid', borderColor: 'divider' }}
         >
             <Toolbar sx={{ gap: 1 }}>
                 <Typography
                     variant="h6"
                     component={Link}
                     to="/"
-                    sx={{ color: 'primary.main', textDecoration: 'none', fontWeight: 'bold', ml: 3 }}
+                    sx={{
+                        display: 'flex', alignItems: 'center', gap: 0.5,
+                        color: 'primary.main', textDecoration: 'none', fontWeight: 'bold', ml: 3,
+                    }}
                 >
-                    🤝 גמ"ח שכונתי
+                    <HandshakeIcon fontSize="small" />
+                    גמ"ח שכונתי
                 </Typography>
 
                 <Button component={NavLink} to="/" end sx={navStyle}>פריטים להשאלה</Button>
