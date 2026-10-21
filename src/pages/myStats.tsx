@@ -1,11 +1,15 @@
 
 import { useContext } from 'react';
 import { useQuery } from '@tanstack/react-query';
-import { Link } from 'react-router-dom';
+import { Link as RouterLink } from 'react-router-dom';
 import { userContext } from '../context/userContext';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
 import { getMyStats, getNeighborhoodStats } from '../server/statsApi';
-import '../style/stats.css';
+import {
+    Box, Paper, Stack, Typography, Link, Alert, CircularProgress,
+} from '@mui/material';
+import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
+import WhatshotIcon from '@mui/icons-material/Whatshot';
 
 const formatDay = (date: string) =>
     new Date(date).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });
@@ -24,48 +28,52 @@ const MyStats = () => {
         queryFn: getNeighborhoodStats,
     });
 
-    if (isLoading) return <p>טוען...</p>;
-    if (isError) return <p>אירעה שגיאה בטעינת הנתונים</p>;
+    if (isLoading) return (
+        <Box sx={{ display: 'flex', justifyContent: 'center', p: 6 }}>
+            <CircularProgress />
+        </Box>
+    );
+    if (isError) return <Alert severity="error">אירעה שגיאה בטעינת הנתונים</Alert>;
     if (!data) return null;
 
     const { totals, topItem } = data;
 
+    const statCards = [
+        { number: totals.myItemsCount, label: 'פריטים שפרסמתי' },
+        { number: totals.timesMyItemsLent, label: 'פעמים שהשאלתי' },
+        { number: totals.timesIBorrowed, label: 'פעמים ששאלתי' },
+        { number: totals.pendingReceived, label: 'בקשות שמחכות לי' },
+    ];
+
     return (
-        <div className="stats">
-            <h2>ההשפעה שלי</h2>
+        <Stack spacing={3}>
+            <Typography variant="h5">ההשפעה שלי</Typography>
 
-            <div className="stats__cards">
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.myItemsCount}</span>
-                    <span className="stat-card__label">פריטים שפרסמתי</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.timesMyItemsLent}</span>
-                    <span className="stat-card__label">פעמים שהשאלתי</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.timesIBorrowed}</span>
-                    <span className="stat-card__label">פעמים ששאלתי</span>
-                </div>
-                <div className="stat-card">
-                    <span className="stat-card__number">{totals.pendingReceived}</span>
-                    <span className="stat-card__label">בקשות שמחכות לי</span>
-                </div>
-            </div>
+            <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
+                {statCards.map(({ number, label }) => (
+                    <Paper key={label} variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
+                        <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{number}</Typography>
+                        <Typography variant="body2" color="text.secondary">{label}</Typography>
+                    </Paper>
+                ))}
+            </Box>
 
-            <div className="stats__box">
-                <h3>הפריט הכי מבוקש שלי</h3>
+            <Paper variant="outlined" sx={{ p: 2.5 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>הפריט הכי מבוקש שלי</Typography>
                 {topItem ? (
-                    <p>
-                        <Link to={`/items/${topItem.id}`}>{topItem.title}</Link> הושאל {topItem.count} פעמים 🏆
-                    </p>
+                    <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center' }}>
+                        <Typography color="text.secondary">
+                            <Link component={RouterLink} to={`/items/${topItem.id}`}>{topItem.title}</Link> הושאל {topItem.count} פעמים
+                        </Typography>
+                        <EmojiEventsIcon fontSize="small" color="warning" />
+                    </Stack>
                 ) : (
-                    <p>עוד אין. כשאחד הפריטים שלך יושאל, הוא יופיע כאן.</p>
+                    <Typography color="text.secondary">עוד אין. כשאחד הפריטים שלך יושאל, הוא יופיע כאן.</Typography>
                 )}
-            </div>
-{/* {כל החלק הזה אני לא ממש הבנתי נא לחזורר} */}
-            <div className="stats__box">
-                <h3>פעילות בחצי השנה האחרונה</h3>
+            </Paper>
+            {/* {כל החלק הזה אני לא ממש הבנתי נא לחזורר} */}
+            <Paper variant="outlined" sx={{ p: 2.5 }}>
+                <Typography variant="h6" sx={{ mb: 1 }}>פעילות בחצי השנה האחרונה</Typography>
                 <ResponsiveContainer width="100%" height={280}>
                     <BarChart data={data.monthly}>
                         <XAxis dataKey="month" />
@@ -76,22 +84,21 @@ const MyStats = () => {
                         <Bar dataKey="borrowed" name="שאלתי" fill="#16a34a" />
                     </BarChart>
                 </ResponsiveContainer>
-            </div>
-
+            </Paper>
 
             {hood && (
                 <>
-                    <h2>מה קורה בשכונה – {user?.neighborhood}</h2>
+                    <Typography variant="h5">מה קורה בשכונה – {user?.neighborhood}</Typography>
 
-                    <div className="stats__cards">
-                        <div className="stat-card">
-                            <span className="stat-card__number">{hood.newItemsThisWeek}</span>
-                            <span className="stat-card__label">פריטים חדשים השבוע</span>
-                        </div>
-                    </div>
+                    <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
+                        <Paper variant="outlined" sx={{ p: 2.5, textAlign: 'center' }}>
+                            <Typography variant="h4" color="primary" sx={{ fontWeight: 700 }}>{hood.newItemsThisWeek}</Typography>
+                            <Typography variant="body2" color="text.secondary">פריטים חדשים השבוע</Typography>
+                        </Paper>
+                    </Box>
 
-                    <div className="stats__box">
-                        <h3>השבוע האחרון</h3>
+                    <Paper variant="outlined" sx={{ p: 2.5 }}>
+                        <Typography variant="h6" sx={{ mb: 1 }}>השבוע האחרון</Typography>
                         <ResponsiveContainer width="100%" height={250}>
                             <LineChart data={hood.daily}>
                                 <XAxis dataKey="date" tickFormatter={formatDay} />
@@ -101,25 +108,28 @@ const MyStats = () => {
                                 <Line type="monotone" dataKey="newRequests" name="בקשות חדשות" stroke="#f59e0b" />
                             </LineChart>
                         </ResponsiveContainer>
-                    </div>
+                    </Paper>
 
-                    <div className="stats__box">
-                        <h3>הכי מבוקשים השבוע 🔥</h3>
+                    <Paper variant="outlined" sx={{ p: 2.5 }}>
+                        <Stack direction="row" spacing={0.5} sx={{ alignItems: 'center', mb: 1 }}>
+                            <Typography variant="h6">הכי מבוקשים השבוע</Typography>
+                            <WhatshotIcon fontSize="small" color="error" />
+                        </Stack>
                         {hood.mostRequested.length === 0 ? (
-                            <p>השבוע עוד לא היו בקשות בשכונה</p>
+                            <Typography color="text.secondary">השבוע עוד לא היו בקשות בשכונה</Typography>
                         ) : (
-                            <ol className="stats__list">
+                            <Box component="ol" sx={{ m: 0, pl: 2.5, color: 'text.secondary' }}>
                                 {hood.mostRequested.map(({ item, count }) => (
-                                    <li key={item.id}>
-                                        <Link to={`/items/${item.id}`}>{item.title}</Link> – {count} בקשות
-                                    </li>
+                                    <Box component="li" key={item.id} sx={{ mb: 0.5 }}>
+                                        <Link component={RouterLink} to={`/items/${item.id}`}>{item.title}</Link> – {count} בקשות
+                                    </Box>
                                 ))}
-                            </ol>
+                            </Box>
                         )}
-                    </div>
+                    </Paper>
                 </>
             )}
-        </div>
+        </Stack>
     );
 };
 
