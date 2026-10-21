@@ -124,7 +124,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                         <Chip
                             label={item.isAvailable ? 'זמין' : 'מושאל'}
                             size="small"
-                            color={item.isAvailable ? 'success' : 'error'}
+                            color={item.isAvailable ? 'success' : 'default'}
                         />
                     </Stack>
                 </CardContent>

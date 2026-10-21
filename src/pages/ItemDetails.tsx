@@ -74,7 +74,7 @@ const ItemDetails = () => {
                     <Chip
                         label={item.isAvailable ? 'זמין להשאלה' : 'מושאל כרגע'}
                         size="small"
-                        color={item.isAvailable ? 'success' : 'error'}
+                        color={item.isAvailable ? 'success' : 'default'}
                     />
                 </Stack>
 

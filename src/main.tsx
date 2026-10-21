@@ -21,7 +21,7 @@ const theme = createTheme({
   direction: 'rtl',
   palette: {
     primary: { main: '#4338ca' },
-    secondary: { main: '#aa3bff' },
+    secondary: { main: '#f59e0b' },
     background: { default: '#f5f6fb' },
   },
   typography: {
