@@ -5,8 +5,11 @@ import { userContext } from "../context/userContext";
 import ItemCard from "../components/ItemCard";
 import type { Item } from "../types/itemType";
 import { Link, Outlet } from "react-router-dom";
-import { Box, Typography, Button, Alert, CircularProgress, Stack } from "@mui/material";
+import { Box, Button, Alert, CircularProgress } from "@mui/material";
 import AddIcon from "@mui/icons-material/Add";
+import Inventory2Icon from "@mui/icons-material/Inventory2";
+import PageHeader from "../components/PageHeader";
+import EmptyState from "../components/EmptyState";
 
 
 const MyItems = () => {
@@ -28,19 +31,29 @@ const MyItems = () => {
 
     return (
         <Box>
-            <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-                <Typography variant="h5">הפריטים שלי</Typography>
-                <Button component={Link} to="new" variant="contained" startIcon={<AddIcon />}>
-                    פריט חדש
-                </Button>
-            </Stack>
+            <PageHeader
+                title="הפריטים שלי"
+                subtitle="נהלי את הפריטים שפרסמת"
+                action={
+                    <Button component={Link} to="new" variant="contained" startIcon={<AddIcon />}>
+                        פריט חדש
+                    </Button>
+                }
+            />
 
             <Outlet />
 
             {data.items.length === 0 ? (
-                <Typography color="text.secondary" sx={{ mt: 2 }}>
-                    עדיין לא פרסמת פריטים, קדימה תעשי את הצעד הראשון ופרסמי
-                </Typography>
+                <EmptyState
+                    icon={<Inventory2Icon sx={{ fontSize: 56 }} />}
+                    title="עדיין לא פרסמת פריטים"
+                    text="קדימה תעשי את הצעד הראשון ופרסמי"
+                    action={
+                        <Button component={Link} to="new" variant="contained" startIcon={<AddIcon />}>
+                            פריט חדש
+                        </Button>
+                    }
+                />
             ) : (
                 <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: 2, mt: 2 }}>
                     {data.items.map((item: Item) => (

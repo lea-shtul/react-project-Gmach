@@ -10,6 +10,9 @@ import {
 } from '@mui/material';
 import EmojiEventsIcon from '@mui/icons-material/EmojiEvents';
 import WhatshotIcon from '@mui/icons-material/Whatshot';
+import TrendingFlatIcon from '@mui/icons-material/TrendingFlat';
+import PageHeader from '../components/PageHeader';
+import EmptyState from '../components/EmptyState';
 
 const formatDay = (date: string) =>
     new Date(date).toLocaleDateString('he-IL', { day: 'numeric', month: 'numeric' });
@@ -47,7 +50,7 @@ const MyStats = () => {
 
     return (
         <Stack spacing={3}>
-            <Typography variant="h5">ההשפעה שלי</Typography>
+            <PageHeader title="ההשפעה שלי" subtitle={'סיכום הפעילות וההשפעה שלך בגמ"ח'} />
 
             <Box sx={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: 1.5 }}>
                 {statCards.map(({ number, label }) => (
@@ -68,7 +71,11 @@ const MyStats = () => {
                         <EmojiEventsIcon fontSize="small" color="warning" />
                     </Stack>
                 ) : (
-                    <Typography color="text.secondary">עוד אין. כשאחד הפריטים שלך יושאל, הוא יופיע כאן.</Typography>
+                    <EmptyState
+                        icon={<EmojiEventsIcon sx={{ fontSize: 40 }} />}
+                        title="עוד אין פריט מוביל"
+                        text="כשאחד הפריטים שלך יושאל, הוא יופיע כאן"
+                    />
                 )}
             </Paper>
             {/* {כל החלק הזה אני לא ממש הבנתי נא לחזורר} */}
@@ -116,7 +123,10 @@ const MyStats = () => {
                             <WhatshotIcon fontSize="small" color="error" />
                         </Stack>
                         {hood.mostRequested.length === 0 ? (
-                            <Typography color="text.secondary">השבוע עוד לא היו בקשות בשכונה</Typography>
+                            <EmptyState
+                                icon={<TrendingFlatIcon sx={{ fontSize: 40 }} />}
+                                title="השבוע עוד לא היו בקשות בשכונה"
+                            />
                         ) : (
                             <Box component="ol" sx={{ m: 0, pl: 2.5, color: 'text.secondary' }}>
                                 {hood.mostRequested.map(({ item, count }) => (
