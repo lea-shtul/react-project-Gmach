@@ -4,7 +4,8 @@ import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { userContext } from '../context/userContext';
 import { BarChart, Bar, LineChart, Line, XAxis, YAxis, Tooltip, Legend, ResponsiveContainer } from 'recharts';
-import { getMyStats, getNeighborhoodStats } from '../server/statsApi';
+import { getNeighborhoodStats } from '../server/statsApi';
+import { useMyStats } from '../hooks/useMyStats';
 import {
     Box, Paper, Stack, Typography, Link, Alert, CircularProgress,
 } from '@mui/material';
@@ -26,10 +27,7 @@ const formatDay = (date: string) =>
 const MyStats = () => {
     const { user } = useContext(userContext);
 
-    const { data, isLoading, isError } = useQuery({
-        queryKey: ['stats', 'me', user?.id],
-        queryFn: getMyStats,
-    });
+    const { data, isLoading, isError } = useMyStats();
 
     const { data: hood } = useQuery({
         queryKey: ['stats', 'neighborhood', user?.id],

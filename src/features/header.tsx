@@ -8,8 +8,7 @@ import {
 import MenuIcon from '@mui/icons-material/Menu';
 import HandshakeIcon from '@mui/icons-material/Handshake';
 import { userContext } from '../context/userContext';
-import { useQuery } from '@tanstack/react-query';
-import { getMyStats } from '../server/statsApi'
+import { useMyStats } from '../hooks/useMyStats'
 
 
 const navStyle = {
@@ -34,10 +33,7 @@ const Header = () => {
     const { logout, user } = useContext(userContext);
     const [drawerOpen, setDrawerOpen] = useState(false);
 
-    const { data: myStats } = useQuery({
-        queryKey: ['stats', 'me', user?.id],
-        queryFn: getMyStats,
-    });
+    const { data: myStats } = useMyStats();
 
     const navItems = [
         { to: '/', end: true, label: 'פריטים להשאלה' },
