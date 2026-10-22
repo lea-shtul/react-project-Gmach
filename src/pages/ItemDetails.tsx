@@ -3,7 +3,7 @@ import { useContext } from "react"
 import { userContext } from "../context/userContext"
 import RequestForm from "../components/requesrForm"
 import { Box, Stack, Chip, Typography, Button, Alert, CircularProgress } from "@mui/material"
-import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import ArrowForwardIcon from "@mui/icons-material/ArrowForward"
 import { useMeta } from "../hooks/useMeta"
 import { useItem } from "../hooks/useItem"
 
@@ -14,7 +14,7 @@ const ItemDetails = () => {
 
     const { data: item, isLoading, isError } = useItem(id);
 
- const { getLabel } = useMeta()
+    const { getLabel } = useMeta()
     const { user } = useContext(userContext);
     const isOwner = user?.id == item?.ownerId
 
@@ -24,14 +24,14 @@ const ItemDetails = () => {
         </Box>
     );
     if (isError) return (
-        <Box sx={{ maxWidth: 700, mx: 'auto', p: 3 }}>
+        <Box sx={{ maxWidth: 700, mx: 'auto' }}>
             <Alert severity="error">הפריט לא נמצא</Alert>
         </Box>
     );
     if (!item) return null;
 
-    const categoryLabel = getLabel("categories",item.category);
-    const conditionLabel =getLabel("conditions",item.condition);
+    const categoryLabel = getLabel("categories", item.category);
+    const conditionLabel = getLabel("conditions", item.condition);
 
     const infoItems = [
         { label: 'מצב', value: conditionLabel },
@@ -41,9 +41,9 @@ const ItemDetails = () => {
     ];
 
     return (
-        <Box sx={{ maxWidth: 1200, mx: 'auto', width: '100%', p: { xs: 2, sm: 3 } }}>
+        <Box>
             <Box sx={{ maxWidth: 700, mx: 'auto' }}>
-                <Button component={Link} to="/" startIcon={<ArrowBackIcon />} sx={{ mb: 2 }}>
+                <Button component={Link} to="/" startIcon={<ArrowForwardIcon />} sx={{ mb: 2 }}>
                     חזרה לרשימה
                 </Button>
             </Box>
