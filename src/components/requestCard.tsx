@@ -1,13 +1,12 @@
-import { useQuery } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
-import { getAllMeta } from '../server/metaApi';
 import { updateRequestStatus } from '../server/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Alert, Box, Card, CardContent, Stack, Typography, Chip, Button, Link, Snackbar } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import { useMeta } from '../hooks/useMeta';
 
 
 type RequestCardProps = {
@@ -38,11 +37,7 @@ const statusBarColor: Record<RequestStatus, string> = {
 
 const RequestCard = ({ request }: RequestCardProps) => {
 
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity,
-    });
+    const { getLabel } = useMeta();
     const queryClient = useQueryClient();
 
     const cancelMutation = useMutation({
@@ -53,7 +48,7 @@ const RequestCard = ({ request }: RequestCardProps) => {
         },
     });
 
-    const statusLabel = meta?.statuses.find((s) => s.value === request.status)?.label;
+    const statusLabel = getLabel("statuses", request.status);
 
     return (
         <Card

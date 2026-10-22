@@ -1,5 +1,4 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
-import { getAllMeta } from "../server/metaApi"
 import * as yup from 'yup'
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
@@ -12,6 +11,7 @@ import {
     Box, Paper, Typography, TextField, MenuItem, Checkbox, FormControlLabel,
     Button, Stack, Alert, CircularProgress,
 } from "@mui/material";
+import { useMeta } from "../hooks/useMeta";
 
 
 
@@ -49,11 +49,7 @@ const ItemForm = () => {
         : undefined;
 
 
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity
-    });
+    const { meta } = useMeta();
 
     const { user } = useContext(userContext)
     const queryClient = useQueryClient()

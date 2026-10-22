@@ -7,7 +7,7 @@ import { Alert, Box, Button, MenuItem, Paper, Pagination, Skeleton, Stack, TextF
 import SearchOffIcon from "@mui/icons-material/SearchOff";
 import { useState } from "react";
 import type { ItemFilters } from "../types/itemType";
-import { getAllMeta } from "../server/metaApi";
+import { useMeta } from "../hooks/useMeta";
 
 const initialFilters: ItemFilters = {
   page: 1,
@@ -27,11 +27,7 @@ const ItemsList = () => {
     placeholderData: keepPreviousData,
   });
 
-  const { data: meta } = useQuery({
-    queryKey: ['meta'],
-    queryFn: getAllMeta,
-    staleTime: Infinity
-  });
+const {meta}=useMeta();
 
 
 

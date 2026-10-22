@@ -2,12 +2,12 @@ import { useQuery } from "@tanstack/react-query"
 import { Link, useParams } from "react-router-dom"
 import type { Item } from "../types/itemType"
 import { getItemById } from "../server/itemApis"
-import { getAllMeta } from "../server/metaApi"
 import { useContext } from "react"
 import { userContext } from "../context/userContext"
 import RequestForm from "../components/requesrForm"
 import { Box, Stack, Chip, Typography, Button, Alert, CircularProgress } from "@mui/material"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
+import { useMeta } from "../hooks/useMeta"
 
 
 
@@ -19,11 +19,7 @@ const ItemDetails = () => {
         queryFn: () => getItemById(id!),
     });
 
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity// כדי שיקרא את זה מהקאש, רק בפעם הראשונה שהאתר עולה אז היה באמת קריאה מהשרת
-    });
+ const { getLabel } = useMeta()
     const { user } = useContext(userContext);
     const isOwner = user?.id == item?.ownerId
 
@@ -39,8 +35,8 @@ const ItemDetails = () => {
     );
     if (!item) return null;
 
-    const categoryLabel = meta?.categories.find((c) => c.value === item.category)?.label;
-    const conditionLabel = meta?.conditions.find((c) => c.value === item.condition)?.label;
+    const categoryLabel = getLabel("categories",item.category);
+    const conditionLabel =getLabel("conditions",item.condition);
 
     const infoItems = [
         { label: 'מצב', value: conditionLabel },

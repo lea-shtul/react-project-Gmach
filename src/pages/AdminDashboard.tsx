@@ -4,7 +4,6 @@ import {
     BarChart, Bar, LineChart, Line, PieChart, Pie, Cell,
     XAxis, YAxis, Tooltip, Legend, ResponsiveContainer,
 } from 'recharts';
-import { getAllMeta } from '../server/metaApi';
 import { getAdminStats } from '../server/statsApi';
 import { getAdminUsers } from '../server/getUsers';
 import {
@@ -17,6 +16,7 @@ import SwapHorizIcon from '@mui/icons-material/SwapHoriz';
 import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import PageHeader from '../components/PageHeader';
 import StatCard, { type StatColor } from '../components/StatCard';
+import { useMeta } from '../hooks/useMeta';
 
 
 const STATUS_COLORS: Record<string, string> = {
@@ -32,11 +32,8 @@ const formatMonth = (month: string) =>
     new Date(month + '-01').toLocaleDateString('he-IL', { month: 'short' });
 
 const AdminDashboard = () => {
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity,
-    });
+
+   const {getLabel} = useMeta();
 
     const { data: stats, isLoading, isError } = useQuery({
         queryKey: ['stats', 'admin'],
@@ -56,12 +53,12 @@ const AdminDashboard = () => {
 
     const categoryData = stats.byCategory.map((c) => ({
         ...c,
-        label: meta?.categories.find((m) => m.value === c.category)?.label ?? c.category,
+        label: getLabel("categories",c.category),
     }));
 
     const statusData = stats.byStatus.map((s) => ({
         ...s,
-        label: meta?.statuses.find((m) => m.value === s.status)?.label ?? s.status,
+        label: getLabel("statuses", s.status) ?? s.status,
     }));
     // שתי הפונקציות הנל לוקחות את הסטטוס/קטגוריה לפי כל אובייקט ומוסיפות לו את הערך שלו בעברית מהMETA
 

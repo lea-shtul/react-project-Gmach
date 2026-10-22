@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import type { Item } from "../types/itemType"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { getAllMeta } from "../server/metaApi";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMeta } from '../hooks/useMeta';
 import { deletItemByIdMine } from "../server/itemApis";
 import { Alert, Box, Button, Snackbar, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
 import { alpha } from '@mui/material/styles';
@@ -34,11 +34,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity,
-    });
+    const { getLabel } = useMeta();
     const queryClient = useQueryClient();
     const deleteMutation = useMutation({
         mutationFn: deletItemByIdMine,
@@ -49,7 +45,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
         }
     })
 
-    const categoryLabel = meta?.categories.find((c) => c.value === item.category)?.label;
+    const categoryLabel = getLabel('categories', item.category)
     const { color: categoryColor, icon: CategoryIconComp } = CATEGORY_STYLE[item.category] ?? DEFAULT_CATEGORY_STYLE;
 
     return (
@@ -112,7 +108,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                         </Stack>
 
                         <Chip
-                            label={meta?.conditions.find((c) => c.value === item.condition)?.label}
+                            label={getLabel('conditions', item.condition)}
                             size="small"
                             variant="outlined"
                         />

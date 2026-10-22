@@ -1,12 +1,12 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
-import { getAllMeta } from '../server/metaApi';
 import { updateRequestStatus } from '../server/requests';
 import { Box, Card, CardContent, Stack, Typography, Chip, Button, Alert, Link, Snackbar } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import { useMeta } from '../hooks/useMeta';
 
 type RequestCardProps = {
     request: LoanRequest;
@@ -42,11 +42,7 @@ const UPDATE_SUCCESS_MESSAGE: Partial<Record<RequestStatus, string>> = {
 };
 
 const ReceivedRequestCard = ({ request }: RequestCardProps) => {
-    const { data: meta } = useQuery({
-        queryKey: ['meta'],
-        queryFn: getAllMeta,
-        staleTime: Infinity
-    });
+    const { getLabel } = useMeta()
 
     const queryClient = useQueryClient();
 
@@ -61,7 +57,7 @@ const ReceivedRequestCard = ({ request }: RequestCardProps) => {
         },
     });
 
-    const statusLabel = meta?.statuses.find((s) => s.value === request.status)?.label;
+    const statusLabel = getLabel("statuses", request.status);
     const isPending = statusMutation.isPending;
 
     return (
