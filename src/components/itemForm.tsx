@@ -1,17 +1,18 @@
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import * as yup from 'yup'
 import { Controller, useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { createItem, getItemById, updateItem } from "../server/itemApis";
+import { createItem, updateItem } from "../server/itemApis";
 import { useContext } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { userContext } from "../context/userContext";
-import type { Item, newItem } from "../types/itemType";
+import type { newItem } from "../types/itemType";
 import {
     Box, Paper, Typography, TextField, MenuItem, Checkbox, FormControlLabel,
     Button, Stack, Alert, CircularProgress,
 } from "@mui/material";
 import { useMeta } from "../hooks/useMeta";
+import { useItem } from "../hooks/useItem";
 
 
 
@@ -32,11 +33,7 @@ const ItemForm = () => {
     const { id } = useParams();
     const isEdit = !!id;
 
-    const { data: item } = useQuery<Item>({
-        queryKey: ['item', id],
-        queryFn: () => getItemById(id!),
-        enabled: isEdit,
-    });
+    const { data: item } = useItem(id);
     const formValues = item
         ? {
             title: item.title,

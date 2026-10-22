@@ -1,23 +1,18 @@
-import { useQuery } from "@tanstack/react-query"
 import { Link, useParams } from "react-router-dom"
-import type { Item } from "../types/itemType"
-import { getItemById } from "../server/itemApis"
 import { useContext } from "react"
 import { userContext } from "../context/userContext"
 import RequestForm from "../components/requesrForm"
 import { Box, Stack, Chip, Typography, Button, Alert, CircularProgress } from "@mui/material"
 import ArrowBackIcon from "@mui/icons-material/ArrowBack"
 import { useMeta } from "../hooks/useMeta"
+import { useItem } from "../hooks/useItem"
 
 
 
 const ItemDetails = () => {
     const { id } = useParams();
 
-    const { data: item, isLoading, isError } = useQuery<Item>({
-        queryKey: ['item', id],
-        queryFn: () => getItemById(id!),
-    });
+    const { data: item, isLoading, isError } = useItem(id);
 
  const { getLabel } = useMeta()
     const { user } = useContext(userContext);
