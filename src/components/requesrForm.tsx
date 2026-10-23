@@ -3,8 +3,8 @@ import { Controller, useForm } from 'react-hook-form';
 import * as yup from 'yup'
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createRequest } from '../server/requests';
-import { useState } from 'react';
-import { Alert, Snackbar, Paper, Typography, Stack, TextField, Button } from '@mui/material';
+import { Alert, Paper, Typography, Stack, TextField, Button } from '@mui/material';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 
 type RequestFormProps = { itemId: string };
@@ -24,7 +24,7 @@ type RequestFormData = yup.InferType<typeof schema>;
 const RequestForm = ({ itemId }: RequestFormProps) => {
 
 
-    const [snackOpen, setSnackOpen] = useState(false);
+    const { showMessage } = useSnackbar();
 
     const { control, handleSubmit, watch, formState: { errors }, reset } =
         useForm<RequestFormData>({ resolver: yupResolver(schema) });
@@ -34,7 +34,7 @@ const RequestForm = ({ itemId }: RequestFormProps) => {
         mutationFn: createRequest,
         onSuccess: () => {
             reset();
-            setSnackOpen(true);
+            showMessage('הבקשה נשלחה! הבעלים תאשר או תדחה אותה 🎉');
             queryClient.invalidateQueries({ queryKey: ['myRequests'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
         },
@@ -110,17 +110,6 @@ const RequestForm = ({ itemId }: RequestFormProps) => {
                     {mutation.isPending ? 'שולחת...' : 'שליחת בקשה'}
                 </Button>
             </Stack>
-
-            <Snackbar
-                open={snackOpen}
-                autoHideDuration={3000}
-                onClose={() => setSnackOpen(false)}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="success" variant="filled" onClose={() => setSnackOpen(false)}>
-                    הבקשה נשלחה! הבעלים תאשר או תדחה אותה 🎉
-                </Alert>
-            </Snackbar>
         </Paper>
     );
 };
