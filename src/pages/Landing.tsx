@@ -233,7 +233,7 @@ const Landing = () => {
               >
                 <Avatar sx={{ bgcolor: 'primary.main' }}>ד</Avatar>
                 <Typography sx={{ fontSize: 14, flexGrow: 1 }}>
-                  <Box component="b">דבורה כהן</Box> ביקשה לשאול את <Box component="b">הטאבלט</Box>
+                  <Box component="b">דבורה כהן</Box> ביקשה לשאול את <Box component="b">המשאף</Box>
                 </Typography>
                 <Chip label="לאשר" size="small" sx={{ bgcolor: '#eef0ff', color: '#312e81' }} />
               </Stack>
