@@ -11,14 +11,14 @@ type providerProps = {
 
 export const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
 
-export const SnackbarProvider = ({ children }: providerProps) => {
+const SnackbarProvider = ({ children }: providerProps) => {
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
     const [severity, setSeverity] = useState<AlertColor>('success');
 
-    const showMessage = (text: string, severity: AlertColor = 'success') => {
-        setText(text);
-        setSeverity(severity);
+    const showMessage = (newText: string, newSeverity: AlertColor = 'success') => {
+        setText(newText);
+        setSeverity(newSeverity);
         setOpen(true);
     };
 
