@@ -2,11 +2,12 @@ import { Link as RouterLink } from 'react-router-dom';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { updateRequestStatus } from '../server/requests';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { Alert, Box, Card, CardContent, Stack, Typography, Chip, Button, Link, Snackbar } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography, Chip, Button, Link } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useMeta } from '../hooks/useMeta';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 
 type RequestCardProps = {
@@ -38,6 +39,7 @@ const statusBarColor: Record<RequestStatus, string> = {
 const RequestCard = ({ request }: RequestCardProps) => {
 
     const { getLabel } = useMeta();
+    const { showMessage } = useSnackbar();
     const queryClient = useQueryClient();
 
     const cancelMutation = useMutation({
@@ -45,6 +47,7 @@ const RequestCard = ({ request }: RequestCardProps) => {
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ['myRequests'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
+            showMessage('הבקשה בוטלה');
         },
     });
 
@@ -121,17 +124,6 @@ const RequestCard = ({ request }: RequestCardProps) => {
                     </Box>
                 )}
             </CardContent>
-
-            <Snackbar
-                open={cancelMutation.isSuccess}
-                autoHideDuration={3000}
-                onClose={() => cancelMutation.reset()}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="success" variant="filled" onClose={() => cancelMutation.reset()}>
-                    הבקשה בוטלה
-                </Alert>
-            </Snackbar>
         </Card>
     )
 }
