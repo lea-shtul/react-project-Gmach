@@ -20,9 +20,10 @@ const cacheRtl = createCache({
 const theme = createTheme({
   direction: 'rtl',
   palette: {
-    primary: { main: '#4338ca' },
-    secondary: { main: '#f59e0b' },
-    background: { default: '#f5f6fb' },
+    primary: { main: '#4338ca', dark: '#312e81' },
+    secondary: { main: '#f5b544' },
+    background: { default: '#f6f5fb', paper: '#ffffff' },
+    text: { primary: '#1e1b4b', secondary: '#5b5873' },
   },
   typography: {
     fontFamily: '"Rubik", "Segoe UI", Roboto, Arial, sans-serif',
@@ -34,14 +35,17 @@ const theme = createTheme({
     h6: { fontWeight: 600 },
   },
   shape: {
-    borderRadius: 12,
+    borderRadius: 14,
   },
   components: {
     MuiButton: {
+      defaultProps: {
+        disableElevation: true,
+      },
       styleOverrides: {
         root: {
           textTransform: 'none',
-          fontWeight: 600,
+          fontWeight: 700,
         },
       },
     },
@@ -60,6 +64,19 @@ const theme = createTheme({
     MuiTextField: {
       defaultProps: {
         variant: 'outlined',
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+        },
+        notchedOutline: {
+          borderColor: '#d9d6ee',
+        },
+        input: {
+          padding: '12px 14px',
+        },
       },
     },
     MuiChip: {
