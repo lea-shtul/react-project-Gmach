@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import UserProvider from "../context/userContext";
+import SnackbarProvider from "../context/SnackbarContext";
 import App from "../App";
 import { Login } from "../pages/login";
 import Register from "../pages/register";
@@ -23,7 +24,7 @@ import Landing from "../pages/Landing";
 export const route = createBrowserRouter([
     {
         path: '/',
-        element: <UserProvider><App /></UserProvider>,
+        element: <SnackbarProvider><UserProvider><App /></UserProvider></SnackbarProvider>,
         children: [
             {
                 element: <ProtectedRoute />,
