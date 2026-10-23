@@ -6,9 +6,10 @@ import { Controller, useForm } from 'react-hook-form';
 import { useState } from 'react';
 import axios from 'axios';
 import {
-    Alert, Box, Button, Link, MenuItem, Paper, Stack, TextField, Typography,
+    Alert, Box, Button, Link, MenuItem, Stack, TextField, Typography,
 } from '@mui/material';
 import { useMeta } from '../hooks/useMeta';
+import AuthLayout from '../components/AuthLayout';
 
 const schema = yup.object({
     fullName: yup.string().required('שם מלא הוא שדה חובה').min(2, 'לפחות 2 תווים'),
@@ -50,52 +51,61 @@ export const Register = () => {
     };
 
     return (
-        <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-            <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 450 }}>
-                <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 'bold', mb: 1 }}>
-                    הצטרפי לגמ"ח 🤝
-                </Typography>
-                <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mb: 3 }}>
-                    כמה פרטים, ואת בפנים
-                </Typography>
+        <AuthLayout
+            brandHeadingLine1="מה שעומד אצלך בארון,"
+            brandHeadingLine2="יכול לעזור לשכנה"
+            brandSubtitle="משאילות, שואלות ועוזרות אחת לשנייה, בכל שכונות בני ברק."
+        >
+            <Typography sx={{ fontSize: 30, fontWeight: 800, mb: 0.5 }}>
+                הצטרפות לגמ"ח
+            </Typography>
+            <Typography sx={{ color: 'text.secondary', mb: 2.5, fontSize: 14 }}>
+                כמה פרטים ואת בפנים
+            </Typography>
 
-                <Stack component="form" onSubmit={handleSubmit(onSubmit)} spacing={2}>
+            <Stack component="form" onSubmit={handleSubmit(onSubmit)} spacing={1.5}>
+                <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>שם מלא</Typography>
                     <Controller
                         name="fullName"
                         control={control}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                label="שם מלא"
                                 error={!!errors.fullName}
                                 helperText={errors.fullName?.message}
                                 fullWidth
                             />
                         )}
                     />
+                </Box>
 
+                <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>אימייל</Typography>
                     <Controller
                         name="email"
                         control={control}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                label="אימייל"
                                 type="email"
+                                placeholder="name@example.com"
                                 error={!!errors.email}
                                 helperText={errors.email?.message}
                                 fullWidth
                             />
                         )}
                     />
+                </Box>
 
+                <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>סיסמה</Typography>
                     <Controller
                         name="password"
                         control={control}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                label="סיסמה"
                                 type="password"
                                 error={!!errors.password}
                                 helperText={errors.password?.message}
@@ -103,14 +113,16 @@ export const Register = () => {
                             />
                         )}
                     />
+                </Box>
 
+                <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>טלפון</Typography>
                     <Controller
                         name="phone"
                         control={control}
                         render={({ field }) => (
                             <TextField
                                 {...field}
-                                label="טלפון"
                                 type="tel"
                                 error={!!errors.phone}
                                 helperText={errors.phone?.message}
@@ -118,7 +130,10 @@ export const Register = () => {
                             />
                         )}
                     />
+                </Box>
 
+                <Box>
+                    <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>שכונה</Typography>
                     <Controller
                         name="neighborhood"
                         control={control}
@@ -126,7 +141,6 @@ export const Register = () => {
                             <TextField
                                 {...field}
                                 select
-                                label="שכונה"
                                 error={!!errors.neighborhood}
                                 helperText={errors.neighborhood?.message}
                                 fullWidth
@@ -137,20 +151,20 @@ export const Register = () => {
                             </TextField>
                         )}
                     />
+                </Box>
 
-                    {serverError && <Alert severity="error">{serverError}</Alert>}
+                {serverError && <Alert severity="error">{serverError}</Alert>}
 
-                    <Button type="submit" variant="contained" size="large" disabled={isSubmitting} fullWidth>
-                        {isSubmitting ? 'נרשמת...' : 'הרשמה'}
-                    </Button>
-                </Stack>
+                <Button type="submit" variant="contained" disabled={isSubmitting} fullWidth sx={{ height: 50 }}>
+                    {isSubmitting ? 'נרשמת...' : 'הרשמה'}
+                </Button>
+            </Stack>
 
-                <Typography variant="body2" sx={{ textAlign: 'center', mt: 3 }}>
-                    כבר יש לך חשבון?{' '}
-                    <Link component={RouterLink} to="/login">לכניסה</Link>
-                </Typography>
-            </Paper>
-        </Box>
+            <Typography variant="body2" sx={{ textAlign: 'center', mt: 2 }}>
+                כבר יש לך חשבון?{' '}
+                <Link component={RouterLink} to="/login" sx={{ fontWeight: 700 }}>לכניסה</Link>
+            </Typography>
+        </AuthLayout>
     );
 };
 

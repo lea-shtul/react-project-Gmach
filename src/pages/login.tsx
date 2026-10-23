@@ -1,9 +1,10 @@
 import { useContext, useState, type FormEvent } from 'react';
-import {Box, Paper, Typography, TextField, Button, Alert, Stack, Link,} from '@mui/material';
+import { Box, Typography, TextField, Button, Alert, Stack, Link } from '@mui/material';
 import { userContext } from '../context/userContext';
 import { Link as RouterLink } from 'react-router-dom';
+import AuthLayout from '../components/AuthLayout';
 
-export const Login = () =>{
+export const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -24,28 +25,36 @@ export const Login = () =>{
   };
 
   return (
-    <Box sx={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', p: 2 }}>
-      <Paper elevation={3} sx={{ p: 4, width: '100%', maxWidth: 400 }}>
-        <Typography variant="h4" sx={{ textAlign: 'center', fontWeight: 'bold', mb: 1 }}>
-           ברוכה הבאה
-        </Typography>
-        <Typography variant="body2" color="text.secondary" sx={{ textAlign: 'center', mb: 3 }}>
-          התחברי כדי להמשיך לגמ"ח השכונתי
-        </Typography>
+    <AuthLayout
+      brandHeadingLine1="שכונה אחת,"
+      brandHeadingLine2="ארון משותף אחד"
+      brandSubtitle="משאילות, שואלות ועוזרות אחת לשנייה, בכל שכונות בני ברק."
+    >
+      <Typography sx={{ fontSize: 32, fontWeight: 800, mb: 0.5 }}>
+        ברוכה השבה
+      </Typography>
+      <Typography sx={{ color: 'text.secondary', mb: 3, fontSize: 14 }}>
+        התחברי כדי להמשיך לגמ"ח השכונתי
+      </Typography>
 
-        <Box component="form" onSubmit={handleSubmit}>
-          <Stack spacing={2}>
+      <Box component="form" onSubmit={handleSubmit}>
+        <Stack spacing={1.5}>
+          <Box>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>אימייל</Typography>
             <TextField
-              label="אימייל"
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               autoComplete="email"
+              placeholder="name@example.com"
               required
               fullWidth
             />
+          </Box>
+
+          <Box>
+            <Typography sx={{ fontSize: 13, fontWeight: 600, mb: 0.5 }}>סיסמה</Typography>
             <TextField
-              label="סיסמה"
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -53,20 +62,20 @@ export const Login = () =>{
               required
               fullWidth
             />
+          </Box>
 
-            {error && <Alert severity="error">{error}</Alert>}
+          {error && <Alert severity="error">{error}</Alert>}
 
-            <Button type="submit" variant="contained" size="large" disabled={isLoading} fullWidth>
-              {isLoading ? 'מתחברת...' : 'כניסה'}
-            </Button>
-          </Stack>
-        </Box>
+          <Button type="submit" variant="contained" disabled={isLoading} fullWidth sx={{ height: 50, mt: 0.5 }}>
+            {isLoading ? 'מתחברת...' : 'כניסה'}
+          </Button>
+        </Stack>
+      </Box>
 
-        <Typography variant="body2" sx={{ textAlign: 'center', mt: 3 }}>
-          עוד אין לך חשבון?{' '}
-          <Link component={RouterLink} to="/register">להרשמה</Link>
-        </Typography>
-      </Paper>
-    </Box>
+      <Typography variant="body2" sx={{ textAlign: 'center', mt: 2.5 }}>
+        עוד אין לך חשבון?{' '}
+        <Link component={RouterLink} to="/register" sx={{ fontWeight: 700 }}>להרשמה</Link>
+      </Typography>
+    </AuthLayout>
   );
 };
