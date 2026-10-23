@@ -2,11 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import type { LoanRequest, RequestStatus } from '../types/requestType';
 import { updateRequestStatus } from '../server/requests';
-import { Box, Card, CardContent, Stack, Typography, Chip, Button, Alert, Link, Snackbar } from '@mui/material';
+import { Box, Card, CardContent, Stack, Typography, Chip, Button, Alert, Link } from '@mui/material';
 import CalendarTodayIcon from '@mui/icons-material/CalendarToday';
 import PhoneIcon from '@mui/icons-material/Phone';
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useMeta } from '../hooks/useMeta';
+import { useSnackbar } from '../hooks/useSnackbar';
 
 type RequestCardProps = {
     request: LoanRequest;
@@ -43,17 +44,18 @@ const UPDATE_SUCCESS_MESSAGE: Partial<Record<RequestStatus, string>> = {
 
 const ReceivedRequestCard = ({ request }: RequestCardProps) => {
     const { getLabel } = useMeta()
+    const { showMessage } = useSnackbar();
 
     const queryClient = useQueryClient();
 
     const statusMutation = useMutation({
         mutationFn: (status: RequestStatus) => updateRequestStatus(request.id, status),
-        onSuccess: () => {
+        onSuccess: (_data, status) => {
             queryClient.invalidateQueries({ queryKey: ['receivedRequests'] });
             queryClient.invalidateQueries({ queryKey: ['items'] });
             queryClient.invalidateQueries({ queryKey: ['item'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
-
+            showMessage(UPDATE_SUCCESS_MESSAGE[status] ?? 'הבקשה עודכנה');
         },
     });
 
@@ -170,17 +172,6 @@ const ReceivedRequestCard = ({ request }: RequestCardProps) => {
                     </Box>
                 )}
             </CardContent>
-
-            <Snackbar
-                open={statusMutation.isSuccess}
-                autoHideDuration={3000}
-                onClose={() => statusMutation.reset()}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="success" variant="filled" onClose={() => statusMutation.reset()}>
-                    {UPDATE_SUCCESS_MESSAGE[statusMutation.variables as RequestStatus] ?? 'הבקשה עודכנה'}
-                </Alert>
-            </Snackbar>
         </Card>
     );
 };
