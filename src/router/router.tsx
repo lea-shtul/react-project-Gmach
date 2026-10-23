@@ -1,6 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import UserProvider from "../context/userContext";
-import SnackbarProvider from "../context/SnackbarProvider";
+import SnackbarProvider from "../context/SnackbarContext";
 import App from "../App";
 import { Login } from "../pages/login";
 import Register from "../pages/register";

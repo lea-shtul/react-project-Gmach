@@ -1,12 +1,17 @@
-import { useState, type ReactNode } from 'react';
+import { createContext, useState, type ReactNode } from 'react';
 import { Snackbar, Alert, type AlertColor } from '@mui/material';
-import { SnackbarContext } from './SnackbarContext';
 
-type SnackbarProviderProps = {
+type SnackbarContextType = {
+    showMessage: (text: string, severity?: AlertColor) => void;
+};
+
+type providerProps = {
     children: ReactNode;
 };
 
-const SnackbarProvider = ({ children }: SnackbarProviderProps) => {
+export const SnackbarContext = createContext<SnackbarContextType | undefined>(undefined);
+
+export const SnackbarProvider = ({ children }: providerProps) => {
     const [open, setOpen] = useState(false);
     const [text, setText] = useState('');
     const [severity, setSeverity] = useState<AlertColor>('success');
