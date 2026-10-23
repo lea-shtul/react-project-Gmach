@@ -3,9 +3,10 @@ import type { Item } from "../types/itemType"
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useMeta } from '../hooks/useMeta';
 import { deletItemByIdMine } from "../server/itemApis";
-import { Alert, Box, Button, Snackbar, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
+import { Alert, Box, Button, Stack, Card, CardActionArea, CardActions, CardContent, Chip, Typography, Dialog, DialogContent, DialogTitle, DialogContentText, DialogActions } from '@mui/material'
 import { alpha } from '@mui/material/styles';
 import { useState } from "react";
+import { useSnackbar } from '../hooks/useSnackbar';
 import LocationOnOutlined from '@mui/icons-material/LocationOnOutlined';
 import ChildCareIcon from '@mui/icons-material/ChildCare';
 import KitchenIcon from '@mui/icons-material/Kitchen';
@@ -35,6 +36,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
     const [confirmOpen, setConfirmOpen] = useState(false);
 
     const { getLabel } = useMeta();
+    const { showMessage } = useSnackbar();
     const queryClient = useQueryClient();
     const deleteMutation = useMutation({
         mutationFn: deletItemByIdMine,
@@ -42,6 +44,7 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
             queryClient.invalidateQueries({ queryKey: ['items'] });
             queryClient.invalidateQueries({ queryKey: ['stats'] });
             setConfirmOpen(false);
+            showMessage('הפריט נמחק בהצלחה');
         }
     })
 
@@ -158,17 +161,6 @@ const ItemCard = ({ item, showActions }: ItemCardProps) => {
                     </Button>
                 </DialogActions>
             </Dialog>
-
-            <Snackbar
-                open={deleteMutation.isSuccess}
-                autoHideDuration={3000}
-                onClose={() => deleteMutation.reset()}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-            >
-                <Alert severity="success" variant="filled" onClose={() => deleteMutation.reset()}>
-                    הפריט נמחק בהצלחה
-                </Alert>
-            </Snackbar>
         </Card >
     );
 };
