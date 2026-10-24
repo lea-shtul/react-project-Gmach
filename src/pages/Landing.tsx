@@ -1,6 +1,5 @@
 import { Link } from 'react-router-dom';
 import { Box, Stack, Typography, Button, Chip, Avatar } from '@mui/material';
-import VolunteerActivismIcon from '@mui/icons-material/VolunteerActivism';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 import BuildIcon from '@mui/icons-material/Build';
 import ArrowBackIcon from '@mui/icons-material/ArrowBack';
@@ -29,47 +28,7 @@ const steps = [
 const Landing = () => {
   return (
     <Box sx={{ bgcolor: 'background.default', minHeight: '100vh' }}>
-      <Box sx={{ bgcolor: '#ffffff', borderBottom: '1px solid #e6e4f0', py: '14px' }}>
-        <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2 }}>
-          <Stack direction="row" sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
-            <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center' }}>
-              <Box
-                sx={{
-                  width: 40,
-                  height: 40,
-                  borderRadius: '12px',
-                  bgcolor: 'primary.main',
-                  color: '#fff',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                }}
-              >
-                <VolunteerActivismIcon fontSize="small" />
-              </Box>
-              <Typography sx={{ fontSize: 22, fontWeight: 800, color: '#312e81' }}>
-                גמ"ח שכונתי
-              </Typography>
-            </Stack>
-
-            <Stack direction="row" spacing={1.5}>
-              <Button
-                component={Link}
-                to="/login"
-                variant="outlined"
-                sx={{ borderRadius: '12px', borderColor: '#d9d6ee', color: '#312e81' }}
-              >
-                התחברות
-              </Button>
-              <Button component={Link} to="/register" variant="contained" sx={{ borderRadius: '12px' }}>
-                הרשמה
-              </Button>
-            </Stack>
-          </Stack>
-        </Box>
-      </Box>
-
-      <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, mt: '28px' }}>
+      <Box sx={{ maxWidth: 1200, mx: 'auto', px: 2, pt: '28px' }}>
         <Box
           sx={{
             position: 'relative',
@@ -158,7 +117,16 @@ const Landing = () => {
                     fontSize: 17,
                     fontWeight: 700,
                     borderRadius: '14px',
-                    '&:hover': { bgcolor: 'secondary.main' },
+                    transition: 'transform 0.15s ease, box-shadow 0.15s ease',
+                    '&:hover': {
+                      bgcolor: 'secondary.main',
+                      transform: 'translateY(-3px)',
+                      boxShadow: '0 12px 24px rgba(245,181,68,0.45)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(-1px) scale(0.97)',
+                      boxShadow: '0 6px 14px rgba(245,181,68,0.4)',
+                    },
                   }}
                 >
                   הצטרפות לגמ"ח
@@ -175,6 +143,16 @@ const Landing = () => {
                     fontSize: 17,
                     fontWeight: 700,
                     borderRadius: '14px',
+                    transition: 'transform 0.15s ease, background-color 0.15s ease',
+                    '&:hover': {
+                      borderColor: '#4b46a8',
+                      bgcolor: 'rgba(255,255,255,0.08)',
+                      transform: 'translateY(-3px)',
+                    },
+                    '&:active': {
+                      transform: 'translateY(-1px) scale(0.97)',
+                      bgcolor: 'rgba(255,255,255,0.14)',
+                    },
                   }}
                 >
                   כבר יש לי חשבון
