@@ -1,13 +1,13 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query"
 import { getAllItems } from '../server/itemApis'
 import ItemCard from "../components/ItemCard";
-import PageHeader from "../components/PageHeader";
 import EmptyState from "../components/EmptyState";
-import { Alert, Box, Button, MenuItem, Paper, Pagination, Skeleton, Stack, TextField } from "@mui/material";
+import { Alert, Box, Button, MenuItem, Paper, Pagination, Skeleton, Stack, TextField, Typography } from "@mui/material";
 import SearchOffIcon from "@mui/icons-material/SearchOff";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import type { ItemFilters } from "../types/itemType";
 import { useMeta } from "../hooks/useMeta";
+import { userContext } from "../context/userContext";
 
 const initialFilters: ItemFilters = {
   page: 1,
@@ -20,6 +20,7 @@ const initialFilters: ItemFilters = {
 const ItemsList = () => {
 
   const [filters, setFilters] = useState<ItemFilters>(initialFilters);
+  const { user } = useContext(userContext);
 
   const { data, isPending, isError } = useQuery({
     queryKey: ['items', filters],
@@ -84,13 +85,19 @@ const {meta}=useMeta();
         />
 
         <Box sx={{ position: 'relative', display: 'flex', flexDirection: 'column', gap: '26px' }}>
-          <Box
-            sx={{
-              '& .MuiTypography-h5': { color: '#fff', fontWeight: 800 },
-              '& .MuiTypography-body2': { color: '#C9C6EA' },
-            }}
-          >
-            <PageHeader title="פריטים להשאלה" subtitle="עיינו בכל הפריטים שהשכונה משאילה" />
+          <Box>
+            <Typography variant="body2" sx={{ color: '#C9C6EA' }}>
+              שלום, {user?.fullName}
+            </Typography>
+            <Typography variant="h4" sx={{ color: '#fff', fontWeight: 800, mt: 0.5 }}>
+              מה תרצי לשאול{' '}
+              <Box component="span" sx={{ color: '#F5B100' }}>
+                היום?
+              </Box>
+            </Typography>
+            <Typography variant="body2" sx={{ color: '#C9C6EA', mt: 0.5 }}>
+              עייני בכל הפריטים שהשכונה משאילה
+            </Typography>
           </Box>
 
           <Paper
