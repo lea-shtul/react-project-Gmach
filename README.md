@@ -73,11 +73,7 @@ npm run dev
 The client needs the server running (separately) at the URL below. Create a `.env` file in the project root with:
 
 ```
-VITE_API_URL=
+VITE_API_URL=<הכתובת המקומית של השרת>
 ```
 
 > Server repo: https://github.com/lea-shtul/Gmach-project-server — start it first so API calls succeed.
-
-## Screenshots
-
-_Add screenshots here (Landing, Login/Register, Items list, Item details, My Requests / Received Requests, My Stats, Admin Dashboard)._
