@@ -49,6 +49,23 @@ This repository is the **React + TypeScript client**. It talks to a separate **N
 - **Server calls:** every request flows **axios instance → server/*.tsx functions → TanStack Query hook → component**. Components never call axios directly; they call a typed hook (e.g. `useItem`, `useMyStats`) or a mutation that wraps a function from `server/`.
 - **Forms:** all non-trivial forms (`ItemForm`, `RequestForm`, `register.tsx`) use React Hook Form + a Yup schema, so validation messages are declared once per field and shown inline via MUI's `error`/`helperText` props.
 
+## 📬 Email Notifications
+
+To keep lenders and borrowers in the loop, I added automatic email notifications:
+the item owner gets an email when a new borrow request comes in, and the borrower
+gets one when the request is approved, including the owner's contact details.
+
+I used the **[Resend](https://resend.com) HTTP API** rather than SMTP, since Render's
+free tier blocks outgoing SMTP traffic. Emails are sent in a **fire-and-forget**
+manner, so a failed email never blocks or breaks the request itself. To keep things
+safe, I **HTML-escape all user input** before it goes into the email template, and
+I skip sending to demo accounts.
+
+The feature is fully optional: it's configured with four environment variables
+(`RESEND_API_KEY`, `EMAIL_FROM`, `EMAIL_FROM_NAME`, `FRONTEND_URL`), and if they're
+missing, the server simply skips sending, so the project runs locally without a
+Resend account.
+
 ## Project Structure
 
 ```
