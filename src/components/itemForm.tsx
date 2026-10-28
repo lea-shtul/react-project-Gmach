@@ -61,7 +61,7 @@ const ItemForm = () => {
         defaultValues: {
             category: '',
             condition: '',
-            neighborhood: user?.neighborhood ?? '',//ברירת מחדל: השכונה של המשתמשת, אפשר לשנות
+            neighborhood: user?.neighborhood ?? '',
             isPublic: true,
         }, values: formValues
     });
