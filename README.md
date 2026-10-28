@@ -48,8 +48,9 @@ This repository is the **React + TypeScript client**. It talks to a separate **N
 - **Auth & global state:** `userContext` (`context/userContext.tsx`) holds the current user and loading state, exposes `login`/`logout`, and on mount calls `GET /auth/me` with the stored token to restore the session. It's the single source of truth for "who is logged in" across the app — no Redux.
 - **Server calls:** every request flows **axios instance → server/*.tsx functions → TanStack Query hook → component**. Components never call axios directly; they call a typed hook (e.g. `useItem`, `useMyStats`) or a mutation that wraps a function from `server/`.
 - **Forms:** all non-trivial forms (`ItemForm`, `RequestForm`, `register.tsx`) use React Hook Form + a Yup schema, so validation messages are declared once per field and shown inline via MUI's `error`/`helperText` props.
+- **Notifications:** a global `SnackbarProvider` + `useSnackbar` hook shows success messages above all pages, so a message isn't lost when its component unmounts (e.g. after deleting an item).
 
-## 📬 Email Notifications
+## 📬 Email Notifications (server-side)
 
 To keep lenders and borrowers in the loop, I added automatic email notifications:
 the item owner gets an email when a new borrow request comes in, and the borrower
