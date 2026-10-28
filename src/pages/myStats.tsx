@@ -78,7 +78,6 @@ const MyStats = () => {
                     />
                 )}
             </Paper>
-            {/* {כל החלק הזה אני לא ממש הבנתי נא לחזורר} */}
             <Paper variant="outlined" sx={{ p: 2.5 }}>
                 <Typography variant="h6" sx={{ mb: 1 }}>פעילות בחצי השנה האחרונה</Typography>
                 <ResponsiveContainer width="100%" height={280}>
